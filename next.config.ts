@@ -1,7 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "inline",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+    ],
+  },
+  experimental: {
+    optimizePackageImports: ["lucide-react", "motion"],
+  },
 };
 
 export default nextConfig;

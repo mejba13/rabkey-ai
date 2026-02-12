@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1A2E"/>
+      <stop offset="100%" stop-color="#0D0D0D"/>
+    </linearGradient>
+    <linearGradient id="key" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A623"/>
+      <stop offset="100%" stop-color="#FF6B35"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5A623" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded square -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+  <!-- Subtle border -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#F5A623" stroke-opacity="0.2" stroke-width="1"/>
+  <!-- Glow effect -->
+  <circle cx="13" cy="12" r="8" fill="url(#glow)"/>
+  <!-- Key head (circle with cutout) -->
+  <circle cx="13" cy="12" r="5.5" fill="none" stroke="url(#key)" stroke-width="2.2"/>
+  <circle cx="13" cy="12" r="2.2" fill="url(#key)" opacity="0.4"/>
+  <!-- Key shaft -->
+  <line x1="18.2" y1="12" x2="26" y2="12" stroke="url(#key)" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Key teeth -->
+  <line x1="23" y1="12" x2="23" y2="15.5" stroke="url(#key)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="26" y1="12" x2="26" y2="14.5" stroke="url(#key)" stroke-width="2" stroke-linecap="round"/>
+  <!-- AI dot accent -->
+  <circle cx="24.5" cy="22" r="1.8" fill="#F5A623"/>
+  <circle cx="24.5" cy="22" r="1.8" fill="#F5A623" opacity="0.4">
+    <animate attributeName="r" values="1.8;2.8;1.8" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <!-- "G" letter hint in key head -->
+  <path d="M14.5 10.5 A2.8 2.8 0 1 0 14.5 13.5 L13 12" fill="none" stroke="url(#key)" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+</svg>
