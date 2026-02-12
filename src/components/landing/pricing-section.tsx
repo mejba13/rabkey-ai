@@ -10,6 +10,10 @@ import { GamingButton } from "@/components/gaming";
 import { Badge } from "@/components/ui/badge";
 import { staggerContainer, staggerItem } from "@/animations/variants";
 
+/* -------------------------------------------------------------------------- */
+/*  Types                                                                      */
+/* -------------------------------------------------------------------------- */
+
 interface FeatureItem {
   text: string;
   included: boolean;
@@ -24,12 +28,14 @@ interface TierConfig {
   highlight: boolean;
   badge?: string;
   accentColor: string;
-  borderClass: string;
-  glowClass: string;
   buttonVariant: "outline" | "primary" | "secondary" | "legendary";
   buttonText: string;
   description: string;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Tier Data                                                                  */
+/* -------------------------------------------------------------------------- */
 
 const tiers: TierConfig[] = [
   {
@@ -48,8 +54,6 @@ const tiers: TierConfig[] = [
     ],
     highlight: false,
     accentColor: "text-muted-foreground",
-    borderClass: "border-border/50",
-    glowClass: "",
     buttonVariant: "outline",
     buttonText: "Get Started Free",
   },
@@ -70,8 +74,6 @@ const tiers: TierConfig[] = [
     highlight: true,
     badge: "Most Popular",
     accentColor: "text-gaming-orange",
-    borderClass: "border-gaming-orange/50",
-    glowClass: "glow-orange",
     buttonVariant: "primary",
     buttonText: "Start Pro Trial",
   },
@@ -92,25 +94,325 @@ const tiers: TierConfig[] = [
     ],
     highlight: false,
     accentColor: "text-gaming-purple",
-    borderClass: "border-gaming-purple/30",
-    glowClass: "",
     buttonVariant: "secondary",
     buttonText: "Go Ultimate",
   },
 ];
 
+/* -------------------------------------------------------------------------- */
+/*  Billing Toggle                                                             */
+/* -------------------------------------------------------------------------- */
+
+function BillingToggle({
+  isYearly,
+  onChange,
+}: {
+  isYearly: boolean;
+  onChange: (yearly: boolean) => void;
+}) {
+  return (
+    <div className="relative inline-flex items-center rounded-full bg-gaming-surface border border-border/50 p-1">
+      {/* Sliding indicator */}
+      <motion.div
+        layoutId="billing-indicator"
+        className="absolute top-1 bottom-1 rounded-full bg-gaming-orange shadow-lg shadow-gaming-orange/25"
+        style={{ width: "calc(50% - 4px)" }}
+        animate={{ x: isYearly ? "calc(100% + 4px)" : 4 }}
+        transition={{ type: "spring", stiffness: 300, damping: 28 }}
+      />
+
+      <button
+        onClick={() => onChange(false)}
+        className={cn(
+          "relative z-10 px-6 py-2 rounded-full text-sm font-heading font-semibold transition-colors",
+          !isYearly ? "text-white" : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Monthly
+      </button>
+      <button
+        onClick={() => onChange(true)}
+        className={cn(
+          "relative z-10 px-6 py-2 rounded-full text-sm font-heading font-semibold transition-colors flex items-center gap-2",
+          isYearly ? "text-white" : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Yearly
+        <span className="text-[10px] font-bold bg-gaming-teal/20 text-gaming-teal px-2 py-0.5 rounded-full">
+          -20%
+        </span>
+      </button>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Feature Row                                                                */
+/* -------------------------------------------------------------------------- */
+
+function FeatureRow({ feature, muted }: { feature: FeatureItem; muted?: boolean }) {
+  return (
+    <li className="flex items-start gap-2.5 text-sm">
+      {feature.included ? (
+        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gaming-teal/15 shrink-0 ring-1 ring-gaming-teal/20">
+          <Check className="h-3 w-3 text-gaming-teal" />
+        </div>
+      ) : (
+        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-muted/50 shrink-0">
+          <X className="h-3 w-3 text-muted-foreground/30" />
+        </div>
+      )}
+      <span
+        className={cn(
+          feature.included
+            ? muted
+              ? "text-muted-foreground"
+              : "text-foreground"
+            : "text-muted-foreground/30 line-through decoration-muted-foreground/15"
+        )}
+      >
+        {feature.text}
+      </span>
+    </li>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Animated Price                                                             */
+/* -------------------------------------------------------------------------- */
+
+function AnimatedPrice({
+  price,
+  isYearly,
+  highlight,
+}: {
+  price: number;
+  isYearly: boolean;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="mb-6">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={isYearly ? "yearly" : "monthly"}
+          initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+        >
+          {price === 0 ? (
+            <p className="font-heading font-bold text-4xl text-muted-foreground">
+              Free
+            </p>
+          ) : (
+            <p
+              className={cn(
+                "font-heading font-bold text-4xl",
+                highlight && "text-white"
+              )}
+            >
+              <span className="text-lg font-normal text-muted-foreground align-top mr-0.5">
+                $
+              </span>
+              {price.toFixed(2)}
+              <span className="text-base font-normal text-muted-foreground ml-0.5">
+                /mo
+              </span>
+            </p>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      {isYearly && price > 0 && (
+        <motion.p
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="text-xs text-gaming-teal mt-1.5 font-heading font-medium"
+        >
+          Billed ${(price * 12).toFixed(2)}/year — Save ${((price / 0.8 - price) * 12).toFixed(0)}/yr
+        </motion.p>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Pricing Card                                                               */
+/* -------------------------------------------------------------------------- */
+
+function PricingCard({
+  tier,
+  isYearly,
+}: {
+  tier: TierConfig;
+  isYearly: boolean;
+}) {
+  const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
+  const TierIcon = tier.icon;
+  const isFree = tier.name === "Free";
+  const isPro = tier.highlight;
+  const isUltimate = tier.name === "Ultimate";
+
+  return (
+    <motion.div
+      variants={staggerItem}
+      whileHover={{
+        y: -6,
+        transition: { type: "spring", stiffness: 260, damping: 24 },
+      }}
+      className={cn(
+        "relative flex flex-col rounded-2xl",
+        /* Pro tier: taller via scale, gradient-border class, highest z-index */
+        isPro && "gradient-border md:scale-105 z-10",
+        /* Ultimate: subtle purple glow on hover */
+        isUltimate && "group/ultimate",
+        /* Free: more muted, lower emphasis */
+        isFree && "opacity-90 hover:opacity-100 transition-opacity duration-300"
+      )}
+    >
+      {/* Ambient glow behind Pro card */}
+      {isPro && (
+        <div
+          className="pointer-events-none absolute -inset-6 -z-20 rounded-3xl opacity-40 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, oklch(0.784 0.159 72.989 / 30%), transparent 70%)",
+          }}
+        />
+      )}
+
+      {/* Ultimate purple hover glow */}
+      {isUltimate && (
+        <div
+          className="pointer-events-none absolute -inset-4 -z-10 rounded-3xl opacity-0 blur-2xl transition-opacity duration-500 group-hover/ultimate:opacity-30"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, oklch(0.541 0.247 293.009 / 50%), transparent 70%)",
+          }}
+        />
+      )}
+
+      {/* Card inner content — glassmorphic bg */}
+      <div
+        className={cn(
+          "relative flex flex-1 flex-col rounded-2xl p-7",
+          "bg-card/80 backdrop-blur-sm",
+          /* Non-highlighted tiers get a subtle border */
+          !isPro && "border",
+          isFree && "border-border/30",
+          isUltimate && "border-gaming-purple/20 group-hover/ultimate:border-gaming-purple/40 transition-colors duration-300"
+        )}
+      >
+        {/* "Most Popular" badge */}
+        {tier.badge && (
+          <Badge
+            className={cn(
+              "absolute -top-3 left-1/2 -translate-x-1/2",
+              "bg-gradient-to-r from-gaming-orange to-gaming-coral",
+              "text-white border-0 shadow-lg shadow-gaming-orange/20",
+              "font-heading text-xs px-4 py-1 tracking-wide"
+            )}
+          >
+            <Sparkles className="h-3 w-3 mr-1" />
+            {tier.badge}
+          </Badge>
+        )}
+
+        {/* Tier icon + name */}
+        <div className="flex items-center gap-3 mb-2">
+          <div
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl",
+              isPro
+                ? "bg-gaming-orange/15 ring-1 ring-gaming-orange/20"
+                : isUltimate
+                  ? "bg-gaming-purple/15 ring-1 ring-gaming-purple/20"
+                  : "bg-gaming-surface-elevated"
+            )}
+          >
+            <TierIcon className={cn("h-5 w-5", tier.accentColor)} />
+          </div>
+          <h3
+            className={cn(
+              "font-heading font-bold text-xl",
+              isFree && "text-muted-foreground"
+            )}
+          >
+            {tier.name}
+          </h3>
+        </div>
+
+        <p
+          className={cn(
+            "text-sm mb-5",
+            isFree ? "text-muted-foreground/60" : "text-muted-foreground"
+          )}
+        >
+          {tier.description}
+        </p>
+
+        {/* Price with animated transition */}
+        <AnimatedPrice
+          price={price}
+          isYearly={isYearly}
+          highlight={isPro}
+        />
+
+        {/* Divider */}
+        <div
+          className={cn(
+            "h-px w-full mb-6",
+            isPro
+              ? "bg-gradient-to-r from-transparent via-gaming-orange/25 to-transparent"
+              : isUltimate
+                ? "bg-gradient-to-r from-transparent via-gaming-purple/20 to-transparent"
+                : "bg-border/30"
+          )}
+        />
+
+        {/* Features */}
+        <ul className="space-y-3 mb-8 flex-1">
+          {tier.features.map((feature) => (
+            <FeatureRow key={feature.text} feature={feature} muted={isFree} />
+          ))}
+        </ul>
+
+        {/* CTA Button */}
+        <GamingButton
+          variant={tier.buttonVariant}
+          size="lg"
+          className="w-full"
+        >
+          {tier.buttonText}
+        </GamingButton>
+      </div>
+    </motion.div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Section                                                                    */
+/* -------------------------------------------------------------------------- */
+
 export function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
 
   return (
-    <section className="relative py-24">
-      {/* Background */}
+    <section className="relative py-24 overflow-hidden">
+      {/* Section background — subtle top divider gradient line */}
       <div className="pointer-events-none absolute inset-0">
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-3/4"
           style={{
             background:
-              "linear-gradient(to right, transparent, oklch(0.541 0.247 293.009 / 20%), transparent)",
+              "linear-gradient(to right, transparent, oklch(0.541 0.247 293.009 / 25%), oklch(0.784 0.159 72.989 / 20%), transparent)",
+          }}
+        />
+        {/* Faint radial ambient behind the card area */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] opacity-[0.04]"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, oklch(0.784 0.159 72.989), transparent 70%)",
           }}
         />
       </div>
@@ -118,10 +420,11 @@ export function PricingSection() {
       <PageContainer>
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="text-center mb-14"
         >
           <span className="inline-block text-xs font-heading font-bold uppercase tracking-[0.2em] text-gaming-purple mb-4">
             Pricing
@@ -130,38 +433,12 @@ export function PricingSection() {
             Choose Your{" "}
             <GradientText variant="secondary">Power Level</GradientText>
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto text-lg mb-8">
+          <p className="text-muted-foreground max-w-xl mx-auto text-lg mb-10">
             Start free and upgrade when you need more power
           </p>
 
           {/* Monthly / Yearly Toggle */}
-          <div className="inline-flex items-center gap-3 p-1.5 rounded-full bg-gaming-surface border border-border/50">
-            <button
-              onClick={() => setIsYearly(false)}
-              className={cn(
-                "px-5 py-2 rounded-full text-sm font-heading font-semibold transition-all",
-                !isYearly
-                  ? "bg-gaming-orange text-white shadow-lg shadow-gaming-orange/25"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setIsYearly(true)}
-              className={cn(
-                "px-5 py-2 rounded-full text-sm font-heading font-semibold transition-all flex items-center gap-2",
-                isYearly
-                  ? "bg-gaming-orange text-white shadow-lg shadow-gaming-orange/25"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              Yearly
-              <span className="text-[10px] font-bold bg-gaming-teal/20 text-gaming-teal px-2 py-0.5 rounded-full">
-                -20%
-              </span>
-            </button>
-          </div>
+          <BillingToggle isYearly={isYearly} onChange={setIsYearly} />
         </motion.div>
 
         {/* Pricing Cards */}
@@ -170,132 +447,11 @@ export function PricingSection() {
           initial="initial"
           whileInView="animate"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-center max-w-5xl mx-auto"
         >
-          {tiers.map((tier) => {
-            const price = isYearly ? tier.yearlyPrice : tier.monthlyPrice;
-            const TierIcon = tier.icon;
-
-            return (
-              <motion.div
-                key={tier.name}
-                variants={staggerItem}
-                whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 25 } }}
-                className={cn(
-                  "relative rounded-2xl border bg-card p-7",
-                  "flex flex-col",
-                  tier.borderClass,
-                  tier.highlight && cn(tier.glowClass, "md:-mt-4 md:mb-4")
-                )}
-              >
-                {/* Gradient border effect for highlighted tier */}
-                {tier.highlight && (
-                  <div
-                    className="absolute inset-0 rounded-2xl opacity-20"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, oklch(0.784 0.159 72.989 / 15%), transparent 50%, oklch(0.705 0.193 39.221 / 15%))",
-                    }}
-                  />
-                )}
-
-                {/* Badge */}
-                {tier.badge && (
-                  <Badge
-                    className={cn(
-                      "absolute -top-3 left-1/2 -translate-x-1/2",
-                      "bg-gaming-orange text-white border-0",
-                      "font-heading text-xs px-4 py-1"
-                    )}
-                  >
-                    {tier.badge}
-                  </Badge>
-                )}
-
-                <div className="relative z-10">
-                  {/* Icon + Name */}
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-xl",
-                      tier.highlight ? "bg-gaming-orange/10" : "bg-gaming-surface-elevated"
-                    )}>
-                      <TierIcon className={cn("h-5 w-5", tier.accentColor)} />
-                    </div>
-                    <h3 className="font-heading font-bold text-xl">{tier.name}</h3>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
-
-                  {/* Price */}
-                  <div className="mb-6">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={isYearly ? "yearly" : "monthly"}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {price === 0 ? (
-                          <p className="font-heading font-bold text-4xl">Free</p>
-                        ) : (
-                          <p className="font-heading font-bold text-4xl">
-                            ${price.toFixed(2)}
-                            <span className="text-base font-normal text-muted-foreground">
-                              /mo
-                            </span>
-                          </p>
-                        )}
-                      </motion.div>
-                    </AnimatePresence>
-                    {isYearly && price > 0 && (
-                      <p className="text-xs text-gaming-teal mt-1 font-heading">
-                        Billed ${(price * 12).toFixed(2)}/year
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Features */}
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {tier.features.map((feature) => (
-                      <li
-                        key={feature.text}
-                        className="flex items-start gap-2.5 text-sm"
-                      >
-                        {feature.included ? (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gaming-teal/10 shrink-0">
-                            <Check className="h-3 w-3 text-gaming-teal" />
-                          </div>
-                        ) : (
-                          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-muted shrink-0">
-                            <X className="h-3 w-3 text-muted-foreground/40" />
-                          </div>
-                        )}
-                        <span
-                          className={cn(
-                            feature.included
-                              ? "text-foreground"
-                              : "text-muted-foreground/40"
-                          )}
-                        >
-                          {feature.text}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* CTA */}
-                  <GamingButton
-                    variant={tier.buttonVariant}
-                    size="lg"
-                    className="w-full"
-                  >
-                    {tier.buttonText}
-                  </GamingButton>
-                </div>
-              </motion.div>
-            );
-          })}
+          {tiers.map((tier) => (
+            <PricingCard key={tier.name} tier={tier} isYearly={isYearly} />
+          ))}
         </motion.div>
 
         {/* Bottom note */}
@@ -303,7 +459,8 @@ export function PricingSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center text-xs text-muted-foreground mt-8"
+          transition={{ delay: 0.4 }}
+          className="text-center text-xs text-muted-foreground mt-10"
         >
           All plans include a 14-day money-back guarantee. No credit card required for Free tier.
         </motion.p>

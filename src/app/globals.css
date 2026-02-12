@@ -59,10 +59,10 @@
   --color-gaming-surface-elevated: var(--gaming-surface-elevated);
 
   /* Font families */
-  --font-heading: var(--font-outfit);
-  --font-body: var(--font-red-hat-display);
+  --font-heading: var(--font-plus-jakarta-sans);
+  --font-body: var(--font-dm-sans);
   --font-mono: var(--font-jetbrains-mono);
-  --font-sans: var(--font-red-hat-display);
+  --font-sans: var(--font-dm-sans);
 
   /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
@@ -395,6 +395,58 @@
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Hero Search Bar — Animated Gradient Border
+   ========================================================================== */
+@keyframes search-border-glow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.hero-search-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-search-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    oklch(0.784 0.159 72.989 / 0%),
+    oklch(0.784 0.159 72.989 / 40%),
+    oklch(0.541 0.247 293.009 / 40%),
+    oklch(0.775 0.151 171.689 / 30%),
+    oklch(0.784 0.159 72.989 / 0%)
+  );
+  background-size: 300% 100%;
+  animation: search-border-glow 4s ease-in-out infinite;
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+.hero-search-border:focus-within::before {
+  background: linear-gradient(
+    90deg,
+    oklch(0.784 0.159 72.989 / 0%),
+    oklch(0.784 0.159 72.989 / 70%),
+    oklch(0.541 0.247 293.009 / 60%),
+    oklch(0.775 0.151 171.689 / 50%),
+    oklch(0.784 0.159 72.989 / 0%)
+  );
+  background-size: 300% 100%;
+  animation: search-border-glow 3s ease-in-out infinite;
 }
 
 /* ==========================================================================

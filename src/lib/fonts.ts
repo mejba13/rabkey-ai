@@ -1,16 +1,16 @@
-import { Outfit, Red_Hat_Display, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans, JetBrains_Mono } from "next/font/google";
 
-export const outfit = Outfit({
+export const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-outfit",
+  variable: "--font-plus-jakarta-sans",
   display: "swap",
 });
 
-export const redHatDisplay = Red_Hat_Display({
+export const dmSans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-red-hat-display",
+  variable: "--font-dm-sans",
   display: "swap",
 });
 

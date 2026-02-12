@@ -15,129 +15,202 @@ const trustPoints = [
   { icon: Sparkles, text: "14-day Pro trial included" },
 ] as const;
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export function CTASection() {
   const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!email) return;
+    setIsSubmitted(true);
     setEmail("");
+    setTimeout(() => setIsSubmitted(false), 3000);
   }
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-24 sm:py-32 overflow-hidden">
       <PageContainer>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={containerVariants}
           className="relative"
         >
-          {/* Card */}
+          {/* Card container */}
           <div
             className={cn(
-              "relative rounded-3xl p-10 sm:p-16 overflow-hidden",
-              "border border-border/50"
+              "relative rounded-3xl overflow-hidden",
+              "border border-border/30",
+              "bg-card"
             )}
           >
-            {/* Background gradients */}
+            {/* --- Multi-layered background --- */}
             <div className="absolute inset-0">
+              {/* Gradient mesh */}
               <div
                 className="absolute inset-0"
                 style={{
-                  background:
-                    "radial-gradient(ellipse 70% 50% at 30% 50%, oklch(0.784 0.159 72.989 / 8%) 0%, transparent 70%), radial-gradient(ellipse 60% 40% at 70% 50%, oklch(0.541 0.247 293.009 / 6%) 0%, transparent 70%), linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #1A1A2E 100%)",
+                  background: [
+                    "radial-gradient(ellipse 80% 60% at 20% 40%, oklch(0.784 0.159 72.989 / 10%) 0%, transparent 60%)",
+                    "radial-gradient(ellipse 70% 50% at 80% 30%, oklch(0.541 0.247 293.009 / 8%) 0%, transparent 60%)",
+                    "radial-gradient(ellipse 60% 50% at 50% 80%, oklch(0.784 0.159 72.989 / 6%) 0%, transparent 60%)",
+                    "radial-gradient(ellipse 90% 70% at 60% 50%, oklch(0.541 0.247 293.009 / 5%) 0%, transparent 70%)",
+                    "linear-gradient(160deg, #1A1A2E 0%, #16213E 40%, #1A1A2E 100%)",
+                  ].join(", "),
                 }}
               />
+
               {/* Dot grid overlay */}
               <div className="absolute inset-0 dot-grid opacity-20" />
             </div>
 
-            {/* Floating accent orbs */}
-            <div className="pointer-events-none absolute inset-0">
+            {/* --- Floating glow orbs --- */}
+            <div className="pointer-events-none absolute inset-0" aria-hidden>
               <div
-                className="absolute top-[20%] right-[10%] h-32 w-32 rounded-full blur-[60px]"
+                className="absolute top-[15%] right-[8%] h-40 w-40 rounded-full blur-[80px]"
                 style={{
                   background: "oklch(0.784 0.159 72.989 / 15%)",
                   animation: "float 10s ease-in-out infinite",
                 }}
               />
               <div
-                className="absolute bottom-[20%] left-[15%] h-24 w-24 rounded-full blur-[50px]"
+                className="absolute bottom-[15%] left-[10%] h-32 w-32 rounded-full blur-[70px]"
                 style={{
                   background: "oklch(0.541 0.247 293.009 / 12%)",
-                  animation: "float 12s ease-in-out infinite 3s",
+                  animation: "float 13s ease-in-out infinite 2s",
+                }}
+              />
+              <div
+                className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 h-56 w-56 rounded-full blur-[100px]"
+                style={{
+                  background: "oklch(0.784 0.159 72.989 / 6%)",
+                  animation: "float 16s ease-in-out infinite 5s",
+                }}
+              />
+              <div
+                className="absolute top-[10%] left-[25%] h-20 w-20 rounded-full blur-[50px]"
+                style={{
+                  background: "oklch(0.541 0.247 293.009 / 10%)",
+                  animation: "float 9s ease-in-out infinite 1s",
                 }}
               />
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center text-center gap-6 max-w-2xl mx-auto">
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-              >
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gaming-orange/10 text-gaming-orange text-sm font-heading font-medium border border-gaming-orange/20">
-                  <Sparkles className="h-4 w-4" />
-                  Join 50,000+ Smart Gamers
-                </span>
-              </motion.div>
-
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold leading-tight">
-                Ready to{" "}
-                <GradientText variant="primary">
-                  Stop Overpaying
-                </GradientText>
-                ?
-              </h2>
-
-              <p className="text-muted-foreground text-lg max-w-lg">
-                Join thousands of gamers who use GrabKey AI to find the best prices,
-                predict drops, and never overpay again.
-              </p>
-
-              {/* Email Form */}
-              <form
-                onSubmit={handleSubmit}
-                className={cn(
-                  "flex w-full max-w-md items-center gap-2 p-1.5",
-                  "rounded-xl",
-                  "bg-gaming-surface-deep/50 backdrop-blur-sm",
-                  "border border-border/50"
-                )}
-              >
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className={cn(
-                    "h-11 rounded-lg text-sm border-0",
-                    "bg-transparent",
-                    "focus-visible:ring-0 focus-visible:ring-offset-0",
-                    "placeholder:text-muted-foreground/50"
-                  )}
-                />
-                <GamingButton type="submit" size="md" className="rounded-lg shrink-0">
-                  Get Started
-                  <ArrowRight className="h-4 w-4 ml-1" />
-                </GamingButton>
-              </form>
-
-              {/* Trust Points */}
-              <div className="flex flex-wrap items-center justify-center gap-6 mt-2">
-                {trustPoints.map((point) => (
+            {/* --- Content --- */}
+            <div className="relative z-10 flex flex-col items-center text-center px-6 py-16 sm:px-10 sm:py-20 md:px-16 md:py-24">
+              <div className="flex flex-col items-center gap-8 max-w-3xl mx-auto">
+                {/* Badge */}
+                <motion.div variants={itemVariants}>
                   <span
-                    key={point.text}
-                    className="flex items-center gap-2 text-xs text-muted-foreground"
+                    className={cn(
+                      "inline-flex items-center gap-2 px-5 py-2 rounded-full",
+                      "bg-gaming-orange/10 border border-gaming-orange/20",
+                      "text-gaming-orange text-sm font-heading font-medium"
+                    )}
                   >
-                    <point.icon className="h-3.5 w-3.5 text-gaming-teal" />
-                    {point.text}
+                    <Sparkles className="h-4 w-4" />
+                    Join 50,000+ Smart Gamers
                   </span>
-                ))}
+                </motion.div>
+
+                {/* Heading */}
+                <motion.h2
+                  variants={itemVariants}
+                  className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold leading-[1.1] tracking-tight"
+                >
+                  Ready to{" "}
+                  <GradientText variant="primary">
+                    Stop Overpaying
+                  </GradientText>
+                  ?
+                </motion.h2>
+
+                {/* Stat line */}
+                <motion.p
+                  variants={itemVariants}
+                  className="text-lg sm:text-xl text-muted-foreground max-w-xl leading-relaxed"
+                >
+                  <span className="text-foreground font-heading font-semibold">
+                    50,000+
+                  </span>{" "}
+                  gamers saving{" "}
+                  <span className="text-gaming-teal font-heading font-semibold">
+                    $12M+
+                  </span>{" "}
+                  on game keys — powered by AI price prediction and real-time
+                  comparison across 50+ stores.
+                </motion.p>
+
+                {/* Email Form */}
+                <motion.form
+                  variants={itemVariants}
+                  onSubmit={handleSubmit}
+                  className={cn(
+                    "hero-search-border",
+                    "flex w-full max-w-md items-center gap-2 p-1.5",
+                    "rounded-xl",
+                    "bg-gaming-surface-deep/60 backdrop-blur-sm"
+                  )}
+                >
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
+                    className={cn(
+                      "h-11 rounded-lg text-sm border-0",
+                      "bg-transparent",
+                      "focus-visible:ring-0 focus-visible:ring-offset-0",
+                      "placeholder:text-muted-foreground/50"
+                    )}
+                  />
+                  <GamingButton
+                    type="submit"
+                    size="md"
+                    className="rounded-lg shrink-0"
+                  >
+                    {isSubmitted ? "Sent!" : "Get Started"}
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </GamingButton>
+                </motion.form>
+
+                {/* Trust Points */}
+                <motion.div
+                  variants={itemVariants}
+                  className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 mt-2"
+                >
+                  {trustPoints.map((point) => (
+                    <span
+                      key={point.text}
+                      className="flex items-center gap-2 text-sm text-muted-foreground"
+                    >
+                      <point.icon className="h-4 w-4 text-gaming-teal shrink-0" />
+                      {point.text}
+                    </span>
+                  ))}
+                </motion.div>
               </div>
             </div>
           </div>

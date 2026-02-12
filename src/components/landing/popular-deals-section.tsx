@@ -21,7 +21,7 @@ function DealCardSkeleton({ featured = false }: { featured?: boolean }) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border/50 bg-card overflow-hidden",
+        "rounded-2xl border border-border/40 bg-card/80 overflow-hidden",
         featured && "md:col-span-2 md:row-span-2"
       )}
     >
@@ -44,7 +44,26 @@ export function PopularDealsSection() {
   const rest = deals?.slice(1, 5);
 
   return (
-    <section className="relative py-24">
+    <section className="relative py-24 overflow-hidden">
+      {/* Section top divider */}
+      <div className="pointer-events-none absolute inset-x-0 top-0">
+        <div
+          className="mx-auto h-px w-3/4"
+          style={{
+            background:
+              "linear-gradient(to right, transparent, oklch(0.705 0.193 39.221 / 20%), transparent)",
+          }}
+        />
+      </div>
+
+      {/* Subtle background glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full blur-[200px]"
+          style={{ background: "radial-gradient(circle, oklch(0.705 0.193 39.221 / 3%) 0%, transparent 70%)" }}
+        />
+      </div>
+
       <PageContainer>
         {/* Header */}
         <motion.div
@@ -103,13 +122,22 @@ export function PopularDealsSection() {
                   className={cn(
                     "md:col-span-2 md:row-span-2",
                     "group relative rounded-2xl overflow-hidden",
-                    "bg-card border border-border/50",
-                    "transition-[border-color,box-shadow] duration-300",
-                    "hover:border-gaming-orange/40 hover:glow-orange"
+                    "bg-card/80 backdrop-blur-sm border border-border/40",
+                    "transition-all duration-300",
+                    "hover:border-gaming-orange/40 hover:shadow-[0_0_40px_oklch(0.784_0.159_72.989/8%)]"
                   )}
                 >
+                  {/* Hover gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-gaming-orange/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[1]" />
+
+                  {/* Ambient glow */}
+                  <div
+                    className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                    style={{ background: "oklch(0.784 0.159 72.989 / 8%)" }}
+                  />
+
                   {/* Cover Image */}
-                  <div className="relative aspect-[16/10] w-full bg-gaming-surface overflow-hidden">
+                  <div className="relative z-[2] aspect-[16/10] w-full bg-gaming-surface overflow-hidden">
                     <Image
                       src={featured.coverImage}
                       alt={featured.title}
@@ -149,7 +177,7 @@ export function PopularDealsSection() {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 space-y-4">
+                  <div className="relative z-[2] p-6 space-y-4">
                     <div>
                       <h3 className="font-heading font-bold text-xl md:text-2xl">
                         {featured.title}
@@ -195,9 +223,9 @@ export function PopularDealsSection() {
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   className={cn(
                     "group rounded-2xl overflow-hidden",
-                    "bg-card border border-border/50",
-                    "transition-[border-color,box-shadow] duration-300",
-                    "hover:border-gaming-orange/40 hover:glow-orange"
+                    "bg-card/80 backdrop-blur-sm border border-border/40",
+                    "transition-all duration-300",
+                    "hover:border-gaming-orange/40 hover:shadow-[0_0_30px_oklch(0.784_0.159_72.989/6%)]"
                   )}
                 >
                   {/* Cover */}

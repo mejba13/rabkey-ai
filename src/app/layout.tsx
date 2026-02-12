@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { outfit, redHatDisplay, jetbrainsMono } from "@/lib/fonts";
+import { plusJakartaSans, dmSans, jetbrainsMono } from "@/lib/fonts";
 import { Providers } from "@/providers/providers";
 import "./globals.css";
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${redHatDisplay.variable} ${jetbrainsMono.variable}`}
+      className={`${plusJakartaSans.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background font-body antialiased">
