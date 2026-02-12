@@ -1,7 +1,9 @@
 export { HeroSection } from "./hero-section";
+export { LiveTickerSection } from "./live-ticker-section";
 export { FeaturesSection } from "./features-section";
 export { HowItWorksSection } from "./how-it-works-section";
 export { PopularDealsSection } from "./popular-deals-section";
 export { TestimonialsSection } from "./testimonials-section";
 export { PricingSection } from "./pricing-section";
+export { PartnerStoresSection } from "./partner-stores-section";
 export { CTASection } from "./cta-section";
