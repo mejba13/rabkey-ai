@@ -11,11 +11,10 @@
 
 **Compare prices from 50+ stores · AI deal scoring · Smart price predictions · Never overpay for game keys**
 
-[Live Demo](#) · [Report Bug](https://github.com/mejba13/grabkey-ai/issues) · [Request Feature](https://github.com/mejba13/grabkey-ai/issues)
+<img width="1935" height="1440" alt="landing-screen1" src="https://github.com/user-attachments/assets/641917c0-c159-4827-8c5b-d03b1de3c345" />
+<img width="1929" height="1429" alt="deals-age" src="https://github.com/user-attachments/assets/a2d9772c-f51a-4e0a-83cd-ce5306dcb127" />
 
-<br />
 
-<img src="https://placehold.co/900x500/0D0D0D/F5A623?text=GrabKey+AI+Dashboard&font=roboto" alt="GrabKey AI Preview" width="100%" />
 
 </div>
 
