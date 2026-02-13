@@ -111,6 +111,7 @@ export default function RegisterPage() {
       id: `user-${Date.now()}`,
       name: name.trim(),
       email: email.trim(),
+      role: "user",
       tier: "free",
       joinedAt: new Date().toISOString(),
     });

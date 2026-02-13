@@ -182,6 +182,14 @@ export function Header() {
 
               {isAuthenticated && user ? (
                 <div className="hidden md:flex items-center gap-1.5">
+                  {user.role === "admin" && (
+                    <Link
+                      href="/admin"
+                      className="text-[11px] font-heading font-bold uppercase tracking-wider text-gaming-orange/70 hover:text-gaming-orange px-2.5 py-1 rounded-full bg-gaming-orange/[0.06] border border-gaming-orange/10 hover:border-gaming-orange/20 transition-all duration-200"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <Link
                     href="/dashboard"
                     className={cn(

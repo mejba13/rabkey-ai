@@ -13,10 +13,12 @@ import { GamingButton } from "@/components/gaming";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { SocialButton } from "@/components/auth/social-button";
 import { useAuthStore } from "@/stores/auth-store";
+import { authenticateSeedUser } from "@/lib/seed-users";
 
 interface FormErrors {
   email?: string;
   password?: string;
+  general?: string;
 }
 
 export default function LoginPage() {
@@ -54,14 +56,30 @@ export default function LoginPage() {
     if (!validate()) return;
 
     setLoading(true);
+    setErrors({});
 
     // Simulate API call
     await new Promise((r) => setTimeout(r, 1200));
 
+    // Check against seed credentials
+    const seedUser = authenticateSeedUser(email, password);
+
+    if (seedUser) {
+      login(seedUser);
+      toast.success("Welcome back!", {
+        description: `Signed in as ${seedUser.name}.`,
+      });
+      setLoading(false);
+      router.push(seedUser.role === "admin" ? "/admin" : "/dashboard");
+      return;
+    }
+
+    // For demo: also allow any valid email/password as a free user
     login({
-      id: "user-1",
+      id: `user-${Date.now()}`,
       name: email.split("@")[0],
       email,
+      role: "user",
       tier: "free",
       joinedAt: new Date().toISOString(),
     });
