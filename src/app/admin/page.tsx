@@ -21,6 +21,12 @@ import {
   Eye,
   Target,
   Percent,
+  TrendingUp,
+  Search,
+  Settings,
+  Sparkles,
+  Clock,
+  ChevronRight,
 } from "lucide-react";
 import {
   AreaChart,
@@ -45,6 +51,7 @@ import {
   platformDistribution,
 } from "@/lib/mock-data/admin";
 import { formatDate } from "@/lib/formatters";
+import { GradientText } from "@/components/shared/gradient-text";
 
 /* ═══════════════════════════════════════════════
    Animated Counter Hook
@@ -114,11 +121,12 @@ function BentoCard({
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
       className={cn(
         "group relative rounded-2xl overflow-hidden",
-        "bg-[#0d0d18]/80 backdrop-blur-xl",
+        "bg-gradient-to-br from-white/[0.03] via-[#0d0d18]/80 to-transparent",
+        "backdrop-blur-xl",
         "border border-white/[0.06]",
-        "hover:border-white/[0.10]",
-        "transition-colors duration-300",
-        className
+        "hover:border-white/[0.12]",
+        "transition-all duration-300",
+        className,
       )}
     >
       {glowColor && (
@@ -131,6 +139,64 @@ function BentoCard({
       )}
       <div className="relative z-10">{children}</div>
     </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   Sparkline SVG
+   ═══════════════════════════════════════════════ */
+
+function Sparkline({
+  data,
+  color,
+  width = 100,
+  height = 28,
+}: {
+  data: number[];
+  color: string;
+  width?: number;
+  height?: number;
+}) {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+
+  const coords = data.map((v, i) => ({
+    x: (i / (data.length - 1)) * width,
+    y: height - ((v - min) / range) * height * 0.85,
+  }));
+
+  const polyline = coords.map((c) => `${c.x},${c.y}`).join(" ");
+  const areaPath = `M0,${height} ${coords.map((c) => `L${c.x},${c.y}`).join(" ")} L${width},${height} Z`;
+  const gradId = `spark-${color.replace("#", "")}`;
+
+  return (
+    <svg width={width} height={height} className="overflow-visible">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.2} />
+          <stop offset="100%" stopColor={color} stopOpacity={0} />
+        </linearGradient>
+      </defs>
+      <motion.path
+        d={areaPath}
+        fill={`url(#${gradId})`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+      />
+      <motion.polyline
+        points={polyline}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ delay: 0.3, duration: 1.2, ease: "easeOut" }}
+      />
+    </svg>
   );
 }
 
@@ -293,6 +359,48 @@ function DonutChart({
   );
 }
 
+/* ═══════════════════════════════════════════════
+   Quick Action Button
+   ═══════════════════════════════════════════════ */
+
+function QuickAction({
+  icon: Icon,
+  label,
+  color,
+  bg,
+}: {
+  icon: typeof Users;
+  label: string;
+  color: string;
+  bg: string;
+}) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.03, y: -1 }}
+      whileTap={{ scale: 0.97 }}
+      className={cn(
+        "flex items-center gap-2.5 px-4 py-2.5 rounded-xl w-full",
+        "bg-white/[0.02] border border-white/[0.06]",
+        "hover:bg-white/[0.04] hover:border-white/[0.10]",
+        "transition-all duration-200 cursor-pointer",
+      )}
+    >
+      <div
+        className={cn(
+          "size-7 rounded-lg flex items-center justify-center",
+          bg,
+        )}
+      >
+        <Icon className={cn("size-3.5", color)} />
+      </div>
+      <span className="text-[12px] font-heading font-semibold text-white/50">
+        {label}
+      </span>
+      <ChevronRight className="size-3 text-white/15 ml-auto" />
+    </motion.button>
+  );
+}
+
 /* ══════════════════════════════════════════════
    MAIN DASHBOARD
    ══════════════════════════════════════════════ */
@@ -318,21 +426,21 @@ export default function AdminOverviewPage() {
         className="flex items-end justify-between"
       >
         <div>
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-gradient-to-br from-gaming-orange/20 to-gaming-coral/10 border border-gaming-orange/20 flex items-center justify-center">
+          <div className="flex items-center gap-3.5">
+            <div className="size-11 rounded-xl bg-gradient-to-br from-gaming-orange/20 to-gaming-coral/10 border border-gaming-orange/20 flex items-center justify-center shadow-lg shadow-gaming-orange/5">
               <Flame className="size-5 text-gaming-orange" />
             </div>
             <div>
-              <h1 className="text-2xl font-heading font-bold text-white/95 tracking-tight">
-                Dashboard
+              <h1 className="text-2xl font-heading font-bold tracking-tight">
+                <GradientText variant="primary">Command Center</GradientText>
               </h1>
               <p className="text-[13px] text-white/30 font-heading mt-0.5">
-                Welcome back, Admin. Here&apos;s your command center.
+                Welcome back, Admin. Here&apos;s your real-time overview.
               </p>
             </div>
           </div>
         </div>
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gaming-teal/[0.06] border border-gaming-teal/15">
             <div className="size-1.5 rounded-full bg-gaming-teal animate-pulse" />
             <span className="text-[10px] font-heading font-semibold text-gaming-teal/80 uppercase tracking-wider">
@@ -346,7 +454,7 @@ export default function AdminOverviewPage() {
       </motion.div>
 
       {/* ═══════════════════════════════════════════
-          BENTO GRID — Hero Stats (Asymmetric 2+2 layout)
+          BENTO GRID — Hero Stats (4 major KPIs with sparklines)
           ═══════════════════════════════════════════ */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* ── Total Users ── */}
@@ -374,22 +482,11 @@ export default function AdminOverviewPage() {
                 from last month
               </span>
             </div>
-            <div className="flex items-end gap-[3px] mt-4 h-6">
-              {[35, 45, 38, 52, 48, 60, 55, 70, 65, 78, 72, 85].map(
-                (h, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${h}%` }}
-                    transition={{
-                      delay: 0.3 + i * 0.04,
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                    className="flex-1 rounded-sm bg-gaming-blue/20"
-                  />
-                )
-              )}
+            <div className="mt-4">
+              <Sparkline
+                data={[35, 45, 38, 52, 48, 60, 55, 70, 65, 78, 72, 85]}
+                color="#0EA5E9"
+              />
             </div>
           </div>
         </BentoCard>
@@ -417,22 +514,11 @@ export default function AdminOverviewPage() {
                 from last month
               </span>
             </div>
-            <div className="flex items-end gap-[3px] mt-4 h-6">
-              {[40, 35, 55, 50, 45, 65, 70, 60, 75, 80, 72, 90].map(
-                (h, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ height: 0 }}
-                    animate={{ height: `${h}%` }}
-                    transition={{
-                      delay: 0.3 + i * 0.04,
-                      duration: 0.4,
-                      ease: "easeOut",
-                    }}
-                    className="flex-1 rounded-sm bg-gaming-teal/25"
-                  />
-                )
-              )}
+            <div className="mt-4">
+              <Sparkline
+                data={[40, 35, 55, 50, 45, 65, 70, 60, 75, 80, 72, 90]}
+                color="#00D4AA"
+              />
             </div>
           </div>
         </BentoCard>
@@ -516,65 +602,100 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* ═══════════════════════════════════════════
-          BENTO GRID — Secondary Stats Strip
+          BENTO GRID — Secondary Stats + Quick Actions
           ═══════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {[
-          {
-            label: "Games Tracked",
-            value: gamesCounter.count.toLocaleString(),
-            icon: Gamepad2,
-            color: "text-gaming-coral",
-            bg: "bg-gaming-coral/[0.06]",
-            border: "border-gaming-coral/10",
-          },
-          {
-            label: "Active Stores",
-            value: String(adminStats.totalStores),
-            icon: Store,
-            color: "text-gaming-blue",
-            bg: "bg-gaming-blue/[0.06]",
-            border: "border-gaming-blue/10",
-          },
-          {
-            label: "Live Deals",
-            value: adminStats.totalDeals.toLocaleString(),
-            icon: Tag,
-            color: "text-gaming-gold",
-            bg: "bg-gaming-gold/[0.06]",
-            border: "border-gaming-gold/10",
-          },
-          {
-            label: "Avg Deal Score",
-            value: String(adminStats.avgDealScore),
-            icon: Activity,
-            color: "text-gaming-teal",
-            bg: "bg-gaming-teal/[0.06]",
-            border: "border-gaming-teal/10",
-          },
-        ].map((stat) => (
-          <BentoCard key={stat.label}>
-            <div className="p-4 flex items-center gap-3">
-              <div
-                className={cn(
-                  "size-10 rounded-xl flex items-center justify-center border shrink-0",
-                  stat.bg,
-                  stat.border
-                )}
-              >
-                <stat.icon className={cn("size-[18px]", stat.color)} />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Secondary stats */}
+        <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            {
+              label: "Games Tracked",
+              value: gamesCounter.count.toLocaleString(),
+              icon: Gamepad2,
+              color: "text-gaming-coral",
+              bg: "bg-gaming-coral/[0.06]",
+              border: "border-gaming-coral/10",
+            },
+            {
+              label: "Active Stores",
+              value: String(adminStats.totalStores),
+              icon: Store,
+              color: "text-gaming-blue",
+              bg: "bg-gaming-blue/[0.06]",
+              border: "border-gaming-blue/10",
+            },
+            {
+              label: "Live Deals",
+              value: adminStats.totalDeals.toLocaleString(),
+              icon: Tag,
+              color: "text-gaming-gold",
+              bg: "bg-gaming-gold/[0.06]",
+              border: "border-gaming-gold/10",
+            },
+            {
+              label: "Avg Deal Score",
+              value: String(adminStats.avgDealScore),
+              icon: Activity,
+              color: "text-gaming-teal",
+              bg: "bg-gaming-teal/[0.06]",
+              border: "border-gaming-teal/10",
+            },
+          ].map((stat) => (
+            <BentoCard key={stat.label}>
+              <div className="p-4 flex items-center gap-3">
+                <div
+                  className={cn(
+                    "size-10 rounded-xl flex items-center justify-center border shrink-0",
+                    stat.bg,
+                    stat.border,
+                  )}
+                >
+                  <stat.icon className={cn("size-[18px]", stat.color)} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-white/20">
+                    {stat.label}
+                  </p>
+                  <p className="text-xl font-heading font-bold text-white/90 tracking-tight tabular-nums mt-0.5">
+                    {stat.value}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-heading font-bold uppercase tracking-wider text-white/20">
-                  {stat.label}
-                </p>
-                <p className="text-xl font-heading font-bold text-white/90 tracking-tight tabular-nums mt-0.5">
-                  {stat.value}
-                </p>
-              </div>
+            </BentoCard>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <BentoCard className="lg:col-span-4">
+          <div className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="size-3.5 text-gaming-orange/50" />
+              <h3 className="text-[11px] font-heading font-bold uppercase tracking-wider text-white/25">
+                Quick Actions
+              </h3>
             </div>
-          </BentoCard>
-        ))}
+            <div className="space-y-2">
+              <QuickAction
+                icon={Search}
+                label="Search Games"
+                color="text-gaming-blue"
+                bg="bg-gaming-blue/[0.08]"
+              />
+              <QuickAction
+                icon={TrendingUp}
+                label="Run Scrapers"
+                color="text-gaming-teal"
+                bg="bg-gaming-teal/[0.08]"
+              />
+              <QuickAction
+                icon={Settings}
+                label="Site Settings"
+                color="text-gaming-purple"
+                bg="bg-gaming-purple/[0.08]"
+              />
+            </div>
+          </div>
+        </BentoCard>
       </div>
 
       {/* ═══════════════════════════════════════════
@@ -586,7 +707,7 @@ export default function AdminOverviewPage() {
           <div className="p-5 pb-2">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-teal/[0.08] border border-gaming-teal/15 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-teal/[0.12] to-gaming-teal/[0.04] border border-gaming-teal/15 flex items-center justify-center">
                   <DollarSign className="size-3.5 text-gaming-teal" />
                 </div>
                 <div>
@@ -617,7 +738,7 @@ export default function AdminOverviewPage() {
               <AreaChart data={revenueHistory}>
                 <defs>
                   <linearGradient
-                    id="bentoRevGrad"
+                    id="cmdRevGrad"
                     x1="0"
                     y1="0"
                     x2="0"
@@ -626,7 +747,12 @@ export default function AdminOverviewPage() {
                     <stop
                       offset="0%"
                       stopColor="#00D4AA"
-                      stopOpacity={0.25}
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="50%"
+                      stopColor="#00D4AA"
+                      stopOpacity={0.08}
                     />
                     <stop
                       offset="100%"
@@ -635,7 +761,7 @@ export default function AdminOverviewPage() {
                     />
                   </linearGradient>
                   <linearGradient
-                    id="bentoUsersGrad"
+                    id="cmdUsrGrad"
                     x1="0"
                     y1="0"
                     x2="0"
@@ -644,7 +770,7 @@ export default function AdminOverviewPage() {
                     <stop
                       offset="0%"
                       stopColor="#7C3AED"
-                      stopOpacity={0.15}
+                      stopOpacity={0.2}
                     />
                     <stop
                       offset="100%"
@@ -672,22 +798,33 @@ export default function AdminOverviewPage() {
                   tickLine={false}
                   axisLine={false}
                   fontFamily="var(--font-heading)"
+                  tickFormatter={(v: number) =>
+                    v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
+                  }
                 />
                 <Tooltip contentStyle={chartTooltipStyle} />
                 <Area
                   type="monotone"
                   dataKey="revenue"
                   stroke="#00D4AA"
-                  fill="url(#bentoRevGrad)"
+                  fill="url(#cmdRevGrad)"
                   strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    fill: "#00D4AA",
+                    stroke: "#0d0d18",
+                    strokeWidth: 2,
+                  }}
                 />
                 <Area
                   type="monotone"
                   dataKey="users"
                   stroke="#7C3AED"
-                  fill="url(#bentoUsersGrad)"
+                  fill="url(#cmdUsrGrad)"
                   strokeWidth={1.5}
                   strokeDasharray="4 4"
+                  dot={false}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -695,11 +832,14 @@ export default function AdminOverviewPage() {
         </BentoCard>
 
         {/* ── Traffic Chart ── */}
-        <BentoCard className="lg:col-span-5" glowColor="rgba(245,166,35,0.02)">
+        <BentoCard
+          className="lg:col-span-5"
+          glowColor="rgba(245,166,35,0.02)"
+        >
           <div className="p-5 pb-2">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-orange/[0.08] border border-gaming-orange/15 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-orange/[0.12] to-gaming-orange/[0.04] border border-gaming-orange/15 flex items-center justify-center">
                   <Eye className="size-3.5 text-gaming-orange" />
                 </div>
                 <div>
@@ -728,6 +868,44 @@ export default function AdminOverviewPage() {
             </div>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={trafficData} barGap={2}>
+                <defs>
+                  <linearGradient
+                    id="cmdVisitGrad"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#F5A623"
+                      stopOpacity={0.9}
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="#F5A623"
+                      stopOpacity={0.4}
+                    />
+                  </linearGradient>
+                  <linearGradient
+                    id="cmdUniqueGrad"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#7C3AED"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="#7C3AED"
+                      stopOpacity={0.3}
+                    />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="rgba(255,255,255,0.03)"
@@ -747,19 +925,20 @@ export default function AdminOverviewPage() {
                   tickLine={false}
                   axisLine={false}
                   fontFamily="var(--font-heading)"
+                  tickFormatter={(v: number) =>
+                    v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)
+                  }
                 />
                 <Tooltip contentStyle={chartTooltipStyle} />
                 <Bar
                   dataKey="visits"
-                  fill="#F5A623"
+                  fill="url(#cmdVisitGrad)"
                   radius={[6, 6, 0, 0]}
-                  opacity={0.85}
                 />
                 <Bar
                   dataKey="uniqueVisitors"
-                  fill="#7C3AED"
+                  fill="url(#cmdUniqueGrad)"
                   radius={[6, 6, 0, 0]}
-                  opacity={0.7}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -776,7 +955,7 @@ export default function AdminOverviewPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-purple/[0.08] border border-gaming-purple/15 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-purple/[0.12] to-gaming-purple/[0.04] border border-gaming-purple/15 flex items-center justify-center">
                   <Crown className="size-3.5 text-gaming-purple" />
                 </div>
                 <div>
@@ -863,7 +1042,7 @@ export default function AdminOverviewPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-blue/[0.08] border border-gaming-blue/15 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-blue/[0.12] to-gaming-blue/[0.04] border border-gaming-blue/15 flex items-center justify-center">
                   <Gamepad2 className="size-3.5 text-gaming-blue" />
                 </div>
                 <div>
@@ -929,7 +1108,7 @@ export default function AdminOverviewPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
                   <Activity className="size-3.5 text-white/40" />
                 </div>
                 <h2 className="font-heading font-semibold text-[13px] text-white/80">
@@ -955,9 +1134,14 @@ export default function AdminOverviewPage() {
                 return (
                   <motion.div
                     key={entry.id}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 + i * 0.05 }}
+                    transition={{
+                      delay: 0.6 + i * 0.05,
+                      type: "spring" as const,
+                      stiffness: 200,
+                      damping: 25,
+                    }}
                     className="group flex items-start gap-3 px-2.5 py-3 rounded-xl hover:bg-white/[0.02] transition-colors"
                   >
                     <div className="relative flex flex-col items-center">
@@ -965,7 +1149,7 @@ export default function AdminOverviewPage() {
                         className={cn(
                           "size-8 rounded-lg flex items-center justify-center shrink-0 border",
                           bg,
-                          color
+                          color,
                         )}
                       >
                         <Icon className="size-3.5" />
@@ -978,9 +1162,12 @@ export default function AdminOverviewPage() {
                       <p className="text-[12px] text-white/50 leading-relaxed">
                         {entry.message}
                       </p>
-                      <p className="text-[10px] text-white/15 mt-1 font-heading">
-                        {formatDate(entry.timestamp)}
-                      </p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Clock className="size-2.5 text-white/10" />
+                        <p className="text-[10px] text-white/15 font-heading">
+                          {formatDate(entry.timestamp)}
+                        </p>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -997,7 +1184,7 @@ export default function AdminOverviewPage() {
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-purple/[0.08] border border-gaming-purple/15 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-purple/[0.12] to-gaming-purple/[0.04] border border-gaming-purple/15 flex items-center justify-center">
                   <Gamepad2 className="size-3.5 text-gaming-purple" />
                 </div>
                 <h2 className="font-heading font-semibold text-[13px] text-white/80">
@@ -1012,20 +1199,7 @@ export default function AdminOverviewPage() {
             <div className="space-y-2">
               {topGames.map((game, i) => {
                 const barWidth = (game.views / topGames[0].views) * 100;
-                const rankColors = [
-                  "text-gaming-gold",
-                  "text-white/40",
-                  "text-gaming-orange/50",
-                  "text-white/15",
-                  "text-white/15",
-                ];
-                const rankBg = [
-                  "bg-gaming-gold/[0.06]",
-                  "bg-white/[0.02]",
-                  "bg-gaming-orange/[0.03]",
-                  "bg-white/[0.01]",
-                  "bg-white/[0.01]",
-                ];
+                const isFirst = i === 0;
 
                 return (
                   <motion.div
@@ -1045,21 +1219,35 @@ export default function AdminOverviewPage() {
                           duration: 0.6,
                           ease: "easeOut",
                         }}
-                        className="h-full bg-gradient-to-r from-gaming-purple/[0.06] to-transparent"
+                        className={cn(
+                          "h-full bg-gradient-to-r",
+                          isFirst
+                            ? "from-gaming-gold/[0.08] to-transparent"
+                            : "from-gaming-purple/[0.06] to-transparent",
+                        )}
                       />
                     </div>
 
                     <div className="relative flex items-center justify-between">
                       <div className="flex items-center gap-3 min-w-0">
-                        <span
-                          className={cn(
-                            "text-[11px] font-heading font-extrabold w-7 h-6 rounded-md flex items-center justify-center",
-                            rankColors[i] ?? "text-white/15",
-                            rankBg[i] ?? "bg-white/[0.01]"
-                          )}
-                        >
-                          #{i + 1}
-                        </span>
+                        {isFirst ? (
+                          <div className="size-7 rounded-md bg-gaming-gold/[0.08] border border-gaming-gold/15 flex items-center justify-center">
+                            <Crown className="size-3.5 text-gaming-gold" />
+                          </div>
+                        ) : (
+                          <span
+                            className={cn(
+                              "text-[11px] font-heading font-extrabold w-7 h-7 rounded-md flex items-center justify-center",
+                              i === 1
+                                ? "text-white/40 bg-white/[0.02]"
+                                : i === 2
+                                  ? "text-gaming-orange/50 bg-gaming-orange/[0.03]"
+                                  : "text-white/15 bg-white/[0.01]",
+                            )}
+                          >
+                            #{i + 1}
+                          </span>
+                        )}
                         <span className="text-[13px] font-heading font-medium text-white/70 truncate">
                           {game.title}
                         </span>
@@ -1077,15 +1265,29 @@ export default function AdminOverviewPage() {
                 );
               })}
             </div>
+
+            {/* Insight bar */}
+            <div className="mt-4 pt-3 border-t border-white/[0.04]">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-heading text-white/20">
+                  Total conversions
+                </span>
+                <span className="text-[12px] font-heading font-bold text-gaming-teal tabular-nums">
+                  {topGames
+                    .reduce((s, g) => s + g.conversions, 0)
+                    .toLocaleString()}
+                </span>
+              </div>
+            </div>
           </div>
         </BentoCard>
 
-        {/* ── Scraper Health ── */}
+        {/* ── System Health ── */}
         <BentoCard className="lg:col-span-3">
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="size-7 rounded-lg bg-gaming-teal/[0.06] border border-gaming-teal/10 flex items-center justify-center">
+                <div className="size-8 rounded-lg bg-gradient-to-br from-gaming-teal/[0.10] to-gaming-teal/[0.03] border border-gaming-teal/10 flex items-center justify-center">
                   <Shield className="size-3.5 text-gaming-teal" />
                 </div>
                 <h2 className="font-heading font-semibold text-[13px] text-white/80">
@@ -1127,13 +1329,13 @@ export default function AdminOverviewPage() {
                   className={cn(
                     "rounded-lg p-2 text-center border",
                     s.bg,
-                    s.border
+                    s.border,
                   )}
                 >
                   <p
                     className={cn(
                       "text-lg font-heading font-bold tabular-nums",
-                      s.color
+                      s.color,
                     )}
                   >
                     {s.count}
@@ -1145,8 +1347,37 @@ export default function AdminOverviewPage() {
               ))}
             </div>
 
+            {/* 30-Day Uptime bar */}
+            <div className="mb-4 p-3 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-heading font-semibold text-white/25 uppercase tracking-wider">
+                  30-Day Uptime
+                </span>
+                <span className="text-[12px] font-heading font-bold text-gaming-teal tabular-nums">
+                  99.8%
+                </span>
+              </div>
+              <div className="flex gap-[2px]">
+                {Array.from({ length: 30 }, (_, i) => {
+                  const isDown = i === 12 || i === 23;
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ delay: 0.8 + i * 0.02 }}
+                      className={cn(
+                        "flex-1 h-4 rounded-sm origin-bottom",
+                        isDown ? "bg-gaming-pink/40" : "bg-gaming-teal/25",
+                      )}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Scraper list */}
-            <div className="space-y-0.5 max-h-[210px] overflow-y-auto pr-1">
+            <div className="space-y-0.5 max-h-[150px] overflow-y-auto pr-1">
               {scraperStatuses.map((s, i) => (
                 <motion.div
                   key={s.storeId}
@@ -1174,7 +1405,7 @@ export default function AdminOverviewPage() {
                         "size-2 rounded-full shrink-0",
                         s.status === "healthy" && "bg-gaming-teal",
                         s.status === "warning" && "bg-gaming-gold",
-                        s.status === "error" && "bg-gaming-pink animate-pulse"
+                        s.status === "error" && "bg-gaming-pink animate-pulse",
                       )}
                     />
                   </div>
