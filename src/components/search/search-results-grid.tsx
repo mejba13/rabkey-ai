@@ -16,8 +16,8 @@ export function SearchResultsGrid({
 }: SearchResultsGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {Array.from({ length: 12 }).map((_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-5">
+        {Array.from({ length: 15 }).map((_, i) => (
           <GameCardSkeleton key={i} />
         ))}
       </div>
@@ -29,7 +29,7 @@ export function SearchResultsGrid({
       variants={staggerContainer}
       initial="initial"
       animate="animate"
-      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-5"
     >
       {games.map((game) => (
         <motion.div key={game.id} variants={staggerItem}>

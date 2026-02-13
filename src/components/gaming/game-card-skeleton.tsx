@@ -9,7 +9,7 @@ function GameCardSkeleton({ className }: GameCardSkeletonProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl bg-gaming-surface border border-border",
+        "overflow-hidden rounded-xl bg-card/50 border border-border/30",
         className
       )}
     >
@@ -18,7 +18,7 @@ function GameCardSkeleton({ className }: GameCardSkeletonProps) {
         <Skeleton className="absolute inset-0 rounded-none shimmer-skeleton" />
 
         {/* Score badge placeholder - top right */}
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2.5 right-2.5">
           <Skeleton className="h-5 w-10 rounded-lg shimmer-skeleton" />
         </div>
 

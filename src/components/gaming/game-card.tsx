@@ -20,12 +20,12 @@ interface GameCardProps {
 function GameCard({ game, className }: GameCardProps) {
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
       className={cn(
-        "group relative overflow-hidden rounded-xl bg-gaming-surface border border-border",
-        "hover:border-gaming-orange/50 hover:shadow-lg hover:shadow-gaming-orange/10",
-        "transition-[border-color,box-shadow] duration-200",
+        "group relative overflow-hidden rounded-xl",
+        "bg-card/50 border border-border/30 backdrop-blur-sm",
+        "hover:border-white/[0.08] transition-all duration-300",
         className
       )}
     >
@@ -36,7 +36,7 @@ function GameCard({ game, className }: GameCardProps) {
             src={game.coverImage}
             alt={game.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
 
@@ -44,12 +44,12 @@ function GameCard({ game, className }: GameCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
           {/* Deal Score - top right */}
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2.5 right-2.5">
             <DealScoreBadge score={game.dealScore} size="sm" />
           </div>
 
           {/* Discount Badge + Wishlist - top left */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1.5">
+          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
             {game.isOnSale && game.discount > 0 && (
               <DiscountBadge discount={game.discount} />
             )}
@@ -69,8 +69,8 @@ function GameCard({ game, className }: GameCardProps) {
                   <PlatformIcon
                     key={platform}
                     platform={platform}
-                    size={14}
-                    className="text-white/70"
+                    size={13}
+                    className="text-white/50"
                   />
                 ))}
               </div>

@@ -14,7 +14,7 @@ export function ViewToggle() {
   const { viewMode, setViewMode } = useSearchStore();
 
   return (
-    <div className="flex items-center rounded-lg border border-border bg-gaming-surface overflow-hidden">
+    <div className="inline-flex items-center rounded-full bg-white/[0.03] border border-white/[0.04] p-0.5 gap-0.5">
       {viewOptions.map(({ value, icon: Icon, label }) => (
         <button
           key={value}
@@ -22,13 +22,13 @@ export function ViewToggle() {
           onClick={() => setViewMode(value)}
           aria-label={label}
           className={cn(
-            "flex items-center justify-center p-2 transition-colors",
+            "flex items-center justify-center p-2 rounded-full transition-all duration-200",
             viewMode === value
-              ? "bg-gaming-orange/15 text-gaming-orange"
-              : "text-muted-foreground hover:text-foreground hover:bg-white/5"
+              ? "bg-white/[0.08] text-white shadow-sm"
+              : "text-white/35 hover:text-white/60"
           )}
         >
-          <Icon className="size-4" />
+          <Icon className="size-3.5" />
         </button>
       ))}
     </div>

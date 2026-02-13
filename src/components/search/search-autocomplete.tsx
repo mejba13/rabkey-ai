@@ -35,8 +35,8 @@ export function SearchAutocomplete({
       transition={{ duration: 0.15 }}
       className={cn(
         "absolute top-full left-0 right-0 z-50 mt-2",
-        "rounded-xl border border-border bg-gaming-surface-elevated",
-        "shadow-xl shadow-black/30 overflow-hidden"
+        "rounded-xl border border-white/[0.06] bg-card/95 backdrop-blur-xl",
+        "shadow-2xl shadow-black/40 overflow-hidden"
       )}
     >
       {/* Loading state */}
@@ -44,7 +44,7 @@ export function SearchAutocomplete({
         <div className="p-3 space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center gap-3 p-2">
-              <Skeleton className="h-10 w-10 rounded-lg shrink-0 shimmer-skeleton" />
+              <Skeleton className="h-10 w-14 rounded-lg shrink-0 shimmer-skeleton" />
               <div className="flex-1 space-y-1.5">
                 <Skeleton className="h-3.5 w-3/4 shimmer-skeleton" />
                 <Skeleton className="h-3 w-1/3 shimmer-skeleton" />
@@ -68,26 +68,26 @@ export function SearchAutocomplete({
                 className={cn(
                   "flex w-full items-center gap-3 px-3 py-2.5",
                   "text-left transition-colors",
-                  "hover:bg-white/5 focus:bg-white/5 outline-none"
+                  "hover:bg-white/[0.04] focus:bg-white/[0.04] outline-none"
                 )}
               >
                 {/* Cover image */}
-                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-gaming-surface">
+                <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-lg bg-white/[0.04]">
                   <Image
                     src={game.coverImage}
                     alt={game.title}
                     fill
                     className="object-cover"
-                    sizes="40px"
+                    sizes="56px"
                   />
                 </div>
 
                 {/* Game info */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-heading font-semibold text-sm text-foreground truncate">
+                  <p className="font-heading font-semibold text-sm text-white/90 truncate">
                     {game.title}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-white/35">
                     {game.metadata.platforms
                       .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
                       .join(", ")}

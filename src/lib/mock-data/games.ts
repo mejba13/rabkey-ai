@@ -1,6 +1,64 @@
 import type { Game } from "@/lib/types";
 
+/* ── Steam header images (460×215) ─────────────────────────────── */
+const steamAppIds: Record<string, number> = {
+  "Elden Ring": 1245620,
+  "Cyberpunk 2077": 1091500,
+  "Baldur's Gate 3": 1086940,
+  "Starfield": 1716740,
+  "Red Dead Redemption 2": 1174180,
+  "The Witcher 3": 292030,
+  "God of War": 1593500,
+  "Hogwarts Legacy": 990080,
+  "GTA V": 271590,
+  "Spider-Man Remastered": 1817070,
+  "Resident Evil 4": 2050650,
+  "Diablo IV": 2344520,
+  "Lies of P": 1627720,
+  "Alan Wake 2": 2729800,
+  "Armored Core VI": 1888160,
+  "Remnant 2": 1282100,
+  "Dead Space": 1693980,
+  "Jedi Survivor": 1774580,
+  "Final Fantasy XVI": 2515020,
+  "Palworld": 1623730,
+  "Helldivers 2": 553850,
+  "Dragon's Dogma 2": 2054970,
+  "Black Myth Wukong": 2358720,
+  "Stellar Blade": 2237970,
+  "Indiana Jones": 2677660,
+  "Hades": 1145360,
+  "Celeste": 504230,
+  "Hollow Knight": 367520,
+  "Stardew Valley": 413150,
+  "Terraria": 105600,
+  "Factorio": 427520,
+  "Disco Elysium": 632470,
+  "Outer Wilds": 753640,
+  "Cuphead": 268910,
+  "Ori Will of Wisps": 1057090,
+  "Slay the Spire": 646570,
+  "Dead Cells": 588650,
+  "Undertale": 391540,
+  "Subnautica": 264710,
+  "Valheim": 892970,
+  "Dave the Diver": 1868140,
+  "Lethal Company": 1966720,
+  "Balatro": 2379780,
+  "Vampire Survivors": 1794680,
+  "Inscryption": 1092790,
+  "Obra Dinn": 653530,
+  "Tunic": 553420,
+  "Neon White": 1533420,
+  "Sifu": 2138710,
+  "Hi-Fi Rush": 1817230,
+};
+
 function cover(name: string): string {
+  const appId = steamAppIds[name];
+  if (appId) {
+    return `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+  }
   return `https://placehold.co/460x215/1A1A2E/F5A623?text=${encodeURIComponent(name)}`;
 }
 

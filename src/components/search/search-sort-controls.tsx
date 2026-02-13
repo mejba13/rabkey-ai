@@ -30,7 +30,7 @@ export function SearchSortControls() {
         updateFilter({ sort: value as SortOption })
       }
     >
-      <SelectTrigger size="sm" className="w-[140px] bg-gaming-surface">
+      <SelectTrigger size="sm" className="w-[140px] rounded-full bg-white/[0.03] border-white/[0.04] text-white/60 text-xs font-heading">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent>

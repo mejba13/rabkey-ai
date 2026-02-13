@@ -7,7 +7,6 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import type { Platform } from "@/lib/types";
@@ -36,14 +35,14 @@ export function SearchFilters({
     <div
       className={cn(
         isHorizontal
-          ? "flex items-center gap-4 flex-wrap"
+          ? "flex items-center gap-3 flex-wrap"
           : "flex flex-col gap-5 mt-4"
       )}
     >
       {/* Platform filter */}
       <div className={cn(isHorizontal ? "" : "space-y-2")}>
         {!isHorizontal && (
-          <Label className="text-xs uppercase text-muted-foreground tracking-wider">
+          <Label className="text-[10px] uppercase text-white/35 tracking-wider font-heading">
             Platform
           </Label>
         )}
@@ -55,7 +54,7 @@ export function SearchFilters({
           onValueChange={(value: string[]) =>
             updateFilter({ platforms: value as Platform[] })
           }
-          className="gap-1"
+          className="gap-0.5 bg-white/[0.03] border border-white/[0.04] rounded-full p-0.5"
         >
           {platforms.map((p) => (
             <ToggleGroupItem
@@ -63,11 +62,14 @@ export function SearchFilters({
               value={p.value}
               aria-label={p.label}
               className={cn(
-                "gap-1.5 px-2.5 data-[state=on]:bg-gaming-orange/20 data-[state=on]:text-gaming-orange data-[state=on]:border-gaming-orange/50"
+                "gap-1.5 px-3 py-1.5 rounded-full border-0 text-xs font-heading font-semibold",
+                "data-[state=on]:bg-white/[0.08] data-[state=on]:text-white data-[state=on]:shadow-sm",
+                "data-[state=off]:text-white/35 data-[state=off]:hover:text-white/60",
+                "transition-all duration-200"
               )}
             >
-              <PlatformIcon platform={p.value} size={14} className="" />
-              <span className="text-xs">{p.label}</span>
+              <PlatformIcon platform={p.value} size={13} />
+              <span>{p.label}</span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -76,7 +78,7 @@ export function SearchFilters({
       {/* Price range */}
       <div className={cn(isHorizontal ? "flex items-center gap-2" : "space-y-2")}>
         {!isHorizontal && (
-          <Label className="text-xs uppercase text-muted-foreground tracking-wider">
+          <Label className="text-[10px] uppercase text-white/35 tracking-wider font-heading">
             Price Range
           </Label>
         )}
@@ -91,9 +93,9 @@ export function SearchFilters({
                 priceMin: e.target.value ? Number(e.target.value) : undefined,
               })
             }
-            className="w-20 h-8 text-xs bg-gaming-surface"
+            className="w-20 h-8 text-xs font-heading rounded-full bg-white/[0.03] border-white/[0.04] text-white/70 placeholder:text-white/25"
           />
-          <span className="text-muted-foreground text-xs">-</span>
+          <span className="text-white/15 text-xs">-</span>
           <Input
             type="number"
             placeholder="Max"
@@ -104,7 +106,7 @@ export function SearchFilters({
                 priceMax: e.target.value ? Number(e.target.value) : undefined,
               })
             }
-            className="w-20 h-8 text-xs bg-gaming-surface"
+            className="w-20 h-8 text-xs font-heading rounded-full bg-white/[0.03] border-white/[0.04] text-white/70 placeholder:text-white/25"
           />
         </div>
       </div>
@@ -117,11 +119,11 @@ export function SearchFilters({
           onCheckedChange={(checked) =>
             updateFilter({ onSaleOnly: checked === true })
           }
-          className="data-[state=checked]:bg-gaming-orange data-[state=checked]:border-gaming-orange"
+          className="data-[state=checked]:bg-gaming-orange data-[state=checked]:border-gaming-orange border-white/[0.1]"
         />
         <Label
           htmlFor="on-sale-only"
-          className="text-sm cursor-pointer select-none"
+          className="text-xs font-heading font-semibold text-white/50 cursor-pointer select-none"
         >
           On Sale
         </Label>
@@ -136,13 +138,13 @@ export function SearchFilters({
         )}
       >
         {!isHorizontal && (
-          <Label className="text-xs uppercase text-muted-foreground tracking-wider">
+          <Label className="text-[10px] uppercase text-white/35 tracking-wider font-heading">
             Min Deal Score
           </Label>
         )}
         <div className="flex items-center gap-3">
           {isHorizontal && (
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
+            <span className="text-xs text-white/30 whitespace-nowrap font-heading">
               Score:
             </span>
           )}
@@ -163,27 +165,27 @@ export function SearchFilters({
       </div>
 
       {/* Reset button */}
-      <Button
-        variant="ghost"
-        size="sm"
+      <button
+        type="button"
         onClick={() => {
           resetFilters();
           onApply?.();
         }}
-        className="gap-1.5 text-muted-foreground hover:text-foreground"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-semibold text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200 ml-auto"
       >
-        <X className="size-3.5" />
+        <X className="size-3" />
         Reset
-      </Button>
+      </button>
 
       {/* Apply button for mobile sheet */}
       {onApply && layout === "vertical" && (
-        <Button
+        <button
+          type="button"
           onClick={onApply}
-          className="w-full bg-gaming-orange hover:bg-gaming-orange-hover text-white"
+          className="w-full py-2.5 rounded-full bg-gaming-orange hover:bg-gaming-orange/90 text-white text-sm font-heading font-semibold transition-colors"
         >
           Apply Filters
-        </Button>
+        </button>
       )}
     </div>
   );

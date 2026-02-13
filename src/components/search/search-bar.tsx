@@ -58,8 +58,8 @@ export function SearchBar() {
       {/* Search icon */}
       <Search
         className={cn(
-          "absolute left-4 top-1/2 -translate-y-1/2 size-5 transition-colors",
-          isFocused ? "text-gaming-orange" : "text-muted-foreground"
+          "absolute left-4 top-1/2 -translate-y-1/2 size-4 transition-colors",
+          isFocused ? "text-gaming-orange" : "text-white/25"
         )}
       />
 
@@ -73,11 +73,13 @@ export function SearchBar() {
         aria-label="Search for games"
         placeholder="Search for games, e.g. Elden Ring, Cyberpunk 2077..."
         className={cn(
-          "h-12 w-full rounded-xl border bg-gaming-surface pl-12 pr-12",
-          "text-foreground placeholder:text-muted-foreground",
+          "h-12 w-full rounded-full pl-11 pr-11",
+          "bg-white/[0.04] border text-white/90 font-heading text-sm",
+          "placeholder:text-white/25",
           "outline-none transition-all duration-200",
-          "focus:border-gaming-orange focus:ring-2 focus:ring-gaming-orange/20",
-          isFocused ? "border-gaming-orange" : "border-border"
+          isFocused
+            ? "border-gaming-orange/40 ring-2 ring-gaming-orange/10 bg-white/[0.06]"
+            : "border-white/[0.06] hover:border-white/[0.1]"
         )}
       />
 
@@ -88,12 +90,12 @@ export function SearchBar() {
           onClick={handleClear}
           className={cn(
             "absolute right-4 top-1/2 -translate-y-1/2",
-            "rounded-full p-1 text-muted-foreground",
-            "hover:bg-white/10 hover:text-foreground transition-colors"
+            "rounded-full p-1 text-white/30",
+            "hover:bg-white/10 hover:text-white/60 transition-colors"
           )}
           aria-label="Clear search"
         >
-          <X className="size-4" />
+          <X className="size-3.5" />
         </button>
       )}
 

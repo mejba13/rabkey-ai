@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { DealScoreBadge, PlatformIcon, PriceTag } from "@/components/gaming";
+import { DealScoreBadge, PlatformIcon, PriceTag, DiscountBadge } from "@/components/gaming";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fadeInUp } from "@/animations/variants";
 import type { Game } from "@/lib/types";
@@ -16,8 +16,8 @@ interface SearchResultsListProps {
 
 function ListItemSkeleton() {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-border bg-gaming-surface p-3">
-      <Skeleton className="h-[60px] w-[80px] rounded-lg shrink-0 shimmer-skeleton" />
+    <div className="flex items-center gap-4 rounded-xl border border-border/30 bg-card/50 p-3">
+      <Skeleton className="h-[60px] w-[96px] rounded-lg shrink-0 shimmer-skeleton" />
       <div className="flex-1 space-y-2 min-w-0">
         <Skeleton className="h-4 w-2/3 shimmer-skeleton" />
         <div className="flex items-center gap-2">
@@ -49,7 +49,7 @@ export function SearchResultsList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
       {games.map((game, index) => (
         <motion.div
           key={game.id}
@@ -61,40 +61,45 @@ export function SearchResultsList({
           <Link
             href={`/game/${game.slug}`}
             className={cn(
-              "group flex items-center gap-4 rounded-xl border border-border bg-gaming-surface p-3",
-              "hover:border-gaming-orange/50 hover:shadow-lg hover:shadow-gaming-orange/5",
-              "transition-all duration-200"
+              "group flex items-center gap-4 rounded-xl p-3",
+              "bg-card/50 border border-border/30 backdrop-blur-sm",
+              "hover:border-white/[0.08] transition-all duration-300"
             )}
           >
             {/* Cover image */}
-            <div className="relative h-[60px] w-[80px] shrink-0 overflow-hidden rounded-lg bg-gaming-surface-elevated">
+            <div className="relative h-[60px] w-[96px] shrink-0 overflow-hidden rounded-lg bg-white/[0.04]">
               <Image
                 src={game.coverImage}
                 alt={game.title}
                 fill
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
-                sizes="80px"
+                sizes="96px"
               />
             </div>
 
             {/* Game info */}
             <div className="flex-1 min-w-0">
-              <h3 className="font-heading font-semibold text-sm text-foreground truncate group-hover:text-gaming-orange transition-colors">
-                {game.title}
-              </h3>
-              <div className="flex items-center gap-1.5 mt-1">
+              <div className="flex items-center gap-2.5 mb-1">
+                <h3 className="font-heading font-semibold text-sm text-white/90 truncate group-hover:text-white transition-colors">
+                  {game.title}
+                </h3>
+                {game.isOnSale && game.discount > 0 && (
+                  <DiscountBadge discount={game.discount} />
+                )}
+              </div>
+              <div className="flex items-center gap-1.5">
                 {game.metadata.platforms.map((platform) => (
                   <PlatformIcon
                     key={platform}
                     platform={platform}
-                    size={14}
-                    className="text-muted-foreground"
+                    size={13}
+                    className="text-white/25"
                   />
                 ))}
                 {game.metadata.genres.length > 0 && (
                   <>
-                    <span className="text-border mx-1">|</span>
-                    <span className="text-xs text-muted-foreground truncate">
+                    <span className="h-0.5 w-0.5 rounded-full bg-white/15 mx-1" />
+                    <span className="text-[11px] text-white/30 truncate font-heading">
                       {game.metadata.genres.slice(0, 3).join(", ")}
                     </span>
                   </>
