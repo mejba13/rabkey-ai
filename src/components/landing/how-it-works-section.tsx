@@ -1,199 +1,162 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Search, BarChart3, Zap, ArrowRight } from "lucide-react";
+import { Search, BarChart3, Zap, ArrowRight, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/layout/page-container";
 import { GradientText } from "@/components/shared";
 import { GamingButton } from "@/components/gaming";
+import { staggerContainer, staggerItem } from "@/animations/variants";
+import type { LucideIcon } from "lucide-react";
 
-/* -------------------------------------------------------------------------- */
-/*  Step data                                                                 */
-/* -------------------------------------------------------------------------- */
+interface Step {
+  number: string;
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  detail: string;
+  accent: "orange" | "purple" | "teal";
+}
 
-const steps = [
+const steps: Step[] = [
   {
     number: "01",
     icon: Search,
     title: "Search Any Game",
     description:
-      "Type a game name and instantly see prices from 50+ stores. Our real-time engine updates every 15 minutes across all major retailers.",
-    detail: "Instant results from Steam, GOG, Epic, Humble, and more",
-    accent: "orange" as const,
+      "Type a game name and instantly compare prices from 50+ stores. Our real-time engine refreshes every 15 minutes across all major retailers.",
+    detail: "Steam, GOG, Epic, Humble & more",
+    accent: "orange",
   },
   {
     number: "02",
     icon: BarChart3,
     title: "AI Scores Every Deal",
     description:
-      "Our ML model rates each deal 0-100 by analyzing historical prices, store trust, price trends, and predicting future drops. You'll know exactly when to buy.",
-    detail: "7-factor analysis with 90-day price predictions",
-    accent: "purple" as const,
+      "Our ML model rates each deal 0–100 by analyzing historical prices, store trust, price trends, and predicting future drops.",
+    detail: "7-factor analysis · 90-day predictions",
+    accent: "purple",
   },
   {
     number: "03",
     icon: Zap,
     title: "Save Big, Every Time",
     description:
-      "Grab the best deal with confidence. Set alerts for price drops, sync your wishlist, and never overpay again. Our users save an average of 60%.",
-    detail: "Average savings of 60% on every purchase",
-    accent: "teal" as const,
+      "Grab the best deal with confidence. Set alerts, sync your wishlist, and never overpay again. Our users save an average of 60%.",
+    detail: "Average 60% savings per purchase",
+    accent: "teal",
   },
-] as const;
+];
 
-type Accent = (typeof steps)[number]["accent"];
-
-/* -------------------------------------------------------------------------- */
-/*  Accent color mapping                                                      */
-/* -------------------------------------------------------------------------- */
-
-const accentColors: Record<
-  Accent,
-  {
-    text: string;
-    number: string;
-    iconBg: string;
-    iconBorder: string;
-    pillBorder: string;
-    glowFrom: string;
-    gradientLine: string;
-  }
-> = {
+const accentStyles = {
   orange: {
     text: "text-gaming-orange",
-    number: "text-gaming-orange",
-    iconBg: "bg-gaming-orange/10",
-    iconBorder: "border-gaming-orange/30",
-    pillBorder: "border-gaming-orange/25",
-    glowFrom: "shadow-gaming-orange/10",
-    gradientLine: "from-gaming-orange/60",
+    iconBg: "bg-gaming-orange/[0.08]",
+    iconBorder: "border-gaming-orange/20",
+    hoverBorder: "hover:border-gaming-orange/25",
+    numberColor: "text-gaming-orange/[0.06]",
+    dotBg: "bg-gaming-orange",
+    detailBg: "bg-gaming-orange/[0.06]",
+    detailBorder: "border-gaming-orange/10",
   },
   purple: {
     text: "text-gaming-purple",
-    number: "text-gaming-purple",
-    iconBg: "bg-gaming-purple/10",
-    iconBorder: "border-gaming-purple/30",
-    pillBorder: "border-gaming-purple/25",
-    glowFrom: "shadow-gaming-purple/10",
-    gradientLine: "from-gaming-purple/60",
+    iconBg: "bg-gaming-purple/[0.08]",
+    iconBorder: "border-gaming-purple/20",
+    hoverBorder: "hover:border-gaming-purple/25",
+    numberColor: "text-gaming-purple/[0.06]",
+    dotBg: "bg-gaming-purple",
+    detailBg: "bg-gaming-purple/[0.06]",
+    detailBorder: "border-gaming-purple/10",
   },
   teal: {
     text: "text-gaming-teal",
-    number: "text-gaming-teal",
-    iconBg: "bg-gaming-teal/10",
-    iconBorder: "border-gaming-teal/30",
-    pillBorder: "border-gaming-teal/25",
-    glowFrom: "shadow-gaming-teal/10",
-    gradientLine: "from-gaming-teal/60",
+    iconBg: "bg-gaming-teal/[0.08]",
+    iconBorder: "border-gaming-teal/20",
+    hoverBorder: "hover:border-gaming-teal/25",
+    numberColor: "text-gaming-teal/[0.06]",
+    dotBg: "bg-gaming-teal",
+    detailBg: "bg-gaming-teal/[0.06]",
+    detailBorder: "border-gaming-teal/10",
   },
-};
+} as const;
 
-/* -------------------------------------------------------------------------- */
-/*  Spring transition preset                                                  */
-/* -------------------------------------------------------------------------- */
-
-const springTransition = {
-  type: "spring" as const,
-  stiffness: 260,
-  damping: 24,
-};
-
-/* -------------------------------------------------------------------------- */
-/*  Step Card                                                                 */
-/* -------------------------------------------------------------------------- */
-
-interface StepCardProps {
-  step: (typeof steps)[number];
-  index: number;
-}
-
-function StepCard({ step, index }: StepCardProps) {
-  const colors = accentColors[step.accent];
+function StepCard({ step }: { step: Step }) {
+  const colors = accentStyles[step.accent];
   const Icon = step.icon;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{
-        ...springTransition,
-        delay: index * 0.15,
+      variants={staggerItem}
+      whileHover={{
+        y: -4,
+        transition: { type: "spring", stiffness: 300, damping: 25 },
       }}
-      className="relative flex flex-col items-center text-center"
+      className={cn(
+        "group relative flex flex-col rounded-2xl overflow-hidden",
+        "bg-card/50 border border-border/30",
+        colors.hoverBorder,
+        "transition-all duration-300"
+      )}
     >
-      {/* ---------- Large step number ---------- */}
-      <motion.span
-        initial={{ opacity: 0, scale: 0.5 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{
-          ...springTransition,
-          delay: index * 0.15 + 0.1,
-        }}
+      {/* Watermark step number */}
+      <span
         className={cn(
-          "font-heading font-extrabold text-7xl lg:text-8xl leading-none select-none",
-          colors.number,
-          "opacity-90"
+          "absolute -top-6 -right-3 font-heading font-black text-[10rem] leading-none select-none pointer-events-none",
+          colors.numberColor
         )}
         aria-hidden="true"
       >
         {step.number}
-      </motion.span>
+      </span>
 
-      {/* ---------- Card body ---------- */}
-      <div
-        className={cn(
-          "relative -mt-4 w-full rounded-2xl p-6 lg:p-8",
-          "bg-gaming-surface/50 backdrop-blur-md",
-          "border border-border/30",
-          "transition-shadow duration-300",
-          "hover:shadow-xl",
-          colors.glowFrom
-        )}
-      >
-        {/* Icon circle */}
-        <div className="flex justify-center mb-5">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.6 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{
-              ...springTransition,
-              delay: index * 0.15 + 0.2,
-            }}
+      <div className="relative flex flex-col flex-1 p-7 lg:p-8">
+        {/* Top row: step indicator + icon */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex items-center gap-3">
+            {/* Accent dot */}
+            <span
+              className={cn("h-2 w-2 rounded-full shrink-0", colors.dotBg)}
+            />
+            <span className="text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-muted-foreground/50">
+              Step {step.number}
+            </span>
+          </div>
+
+          {/* Icon box */}
+          <div
             className={cn(
-              "flex h-14 w-14 items-center justify-center rounded-full",
-              "border",
+              "flex h-11 w-11 items-center justify-center rounded-xl border",
               colors.iconBg,
-              colors.iconBorder
+              colors.iconBorder,
+              "transition-colors duration-300"
             )}
           >
-            <Icon className={cn("h-6 w-6", colors.text)} />
-          </motion.div>
+            <Icon className={cn("h-5 w-5", colors.text)} />
+          </div>
         </div>
 
         {/* Title */}
-        <h3 className="font-heading font-bold text-xl lg:text-2xl text-white mb-3">
+        <h3 className="font-heading font-bold text-lg lg:text-xl text-foreground/90 mb-3">
           {step.title}
         </h3>
 
         {/* Description */}
-        <p className="text-muted-foreground leading-relaxed text-sm lg:text-base mb-5">
+        <p className="text-sm text-muted-foreground/60 leading-relaxed flex-1 mb-5">
           {step.description}
         </p>
 
-        {/* Detail pill */}
+        {/* Detail chip */}
         <div
           className={cn(
-            "inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs lg:text-sm",
-            "bg-gaming-surface border",
-            colors.pillBorder,
-            colors.text,
-            "font-heading font-medium"
+            "inline-flex items-center gap-2 self-start px-3.5 py-1.5 rounded-full",
+            "text-[11px] font-heading font-medium",
+            colors.detailBg,
+            "border",
+            colors.detailBorder,
+            colors.text
           )}
         >
-          <Icon className="h-3.5 w-3.5 shrink-0" />
           {step.detail}
         </div>
       </div>
@@ -201,103 +164,85 @@ function StepCard({ step, index }: StepCardProps) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Progress Line (desktop only)                                              */
-/* -------------------------------------------------------------------------- */
-
-function ProgressLine() {
+/* Connecting arrows between cards — visible on lg screens only */
+function StepConnector({ index }: { index: number }) {
   return (
-    <div
-      className="hidden lg:block absolute top-[6.5rem] left-0 right-0 z-0 pointer-events-none"
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ delay: 0.3 + index * 0.15, duration: 0.4 }}
+      className="hidden lg:flex items-center justify-center"
       aria-hidden="true"
     >
-      <motion.div
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 1.2, ease: "easeInOut" }}
-        className="mx-auto w-2/3 h-px origin-left"
-        style={{
-          background:
-            "linear-gradient(to right, #F5A623, #7C3AED, #00D4AA)",
-        }}
-      />
-
-      {/* Glow behind the line */}
-      <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 1.4, ease: "easeInOut" }}
-        className="mx-auto -mt-px w-2/3 h-[3px] origin-left blur-sm"
-        style={{
-          background:
-            "linear-gradient(to right, #F5A623, #7C3AED, #00D4AA)",
-          opacity: 0.4,
-        }}
-      />
-    </div>
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-card/60 border border-border/30">
+        <ChevronRight className="h-4 w-4 text-muted-foreground/30" />
+      </div>
+    </motion.div>
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Main Section                                                              */
-/* -------------------------------------------------------------------------- */
-
 export function HowItWorksSection() {
   return (
-    <section className="relative py-24 lg:py-32 bg-gaming-surface/30">
+    <section className="relative py-28 lg:py-32 overflow-hidden">
       {/* Top divider */}
-      <div className="pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-x-0 top-0">
         <div
-          className="mx-auto h-px w-3/4"
+          className="mx-auto h-px w-2/3"
           style={{
             background:
-              "linear-gradient(to right, transparent, oklch(0.304 0.029 284.551 / 50%), transparent)",
+              "linear-gradient(to right, transparent, oklch(0.304 0.029 284.551 / 40%), transparent)",
           }}
         />
       </div>
 
-      <PageContainer>
-        {/* ---- Section header ---- */}
+      {/* Subtle background tint */}
+      <div className="pointer-events-none absolute inset-0 bg-gaming-surface/[0.12]" />
+
+      <PageContainer className="relative">
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={springTransition}
-          className="text-center mb-20"
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16 lg:mb-20"
         >
-          <span className="inline-block text-xs font-heading font-bold uppercase tracking-[0.2em] text-gaming-purple mb-4">
+          <span className="inline-block text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-gaming-purple/80 mb-4">
             How It Works
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight mb-4">
             Three Steps to{" "}
             <GradientText variant="success">Massive Savings</GradientText>
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto text-lg">
+          <p className="text-muted-foreground/60 max-w-lg mx-auto text-base lg:text-lg leading-relaxed">
             From search to savings in seconds. Our AI does the heavy lifting.
           </p>
         </motion.div>
 
-        {/* ---- Steps grid ---- */}
-        <div className="relative">
-          {/* Horizontal progress line connecting steps */}
-          <ProgressLine />
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8">
-            {steps.map((step, i) => (
-              <StepCard key={step.number} step={step} index={i} />
-            ))}
-          </div>
-        </div>
-
-        {/* ---- CTA button ---- */}
+        {/* Steps grid with connectors */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr_auto_1fr] gap-5 lg:gap-0 items-stretch"
+        >
+          {steps.map((step, i) => (
+            <div key={step.number} className="contents">
+              <StepCard step={step} />
+              {i < steps.length - 1 && <StepConnector index={i} />}
+            </div>
+          ))}
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
-          transition={{ ...springTransition, delay: 0.3 }}
-          className="text-center mt-16"
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="text-center mt-14"
         >
           <GamingButton variant="primary" size="lg">
             Start Saving Now

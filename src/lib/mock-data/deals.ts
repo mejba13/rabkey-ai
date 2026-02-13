@@ -1,6 +1,38 @@
 import type { Deal } from "@/lib/types";
 
+const steamAppIds: Record<string, number> = {
+  "The Witcher 3": 292030,
+  "Red Dead Redemption 2": 1174180,
+  "Celeste": 504230,
+  "Dead Space": 1693980,
+  "Dead Cells": 588650,
+  "Cyberpunk 2077": 1091500,
+  "Disco Elysium": 632470,
+  "God of War": 1593500,
+  "Ori Will of Wisps": 1057090,
+  "Hollow Knight": 367520,
+  "Hades": 1145360,
+  "Slay the Spire": 646570,
+  "Inscryption": 1092790,
+  "Cuphead": 268910,
+  "Stardew Valley": 413150,
+  "Elden Ring": 1245620,
+  "Baldur's Gate 3": 1086940,
+  "Black Myth Wukong": 2358720,
+  "Balatro": 2379780,
+  "Helldivers 2": 553850,
+  "Indiana Jones": 2677660,
+  "Resident Evil 4": 2050650,
+  "Jedi Survivor": 1774580,
+  "Hogwarts Legacy": 990080,
+  "Sifu": 2138710,
+};
+
 function cover(name: string): string {
+  const appId = steamAppIds[name];
+  if (appId) {
+    return `https://cdn.akamai.steamstatic.com/steam/apps/${appId}/header.jpg`;
+  }
   return `https://placehold.co/460x215/1A1A2E/F5A623?text=${encodeURIComponent(name)}`;
 }
 
