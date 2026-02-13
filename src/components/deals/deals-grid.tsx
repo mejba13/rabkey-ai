@@ -15,7 +15,7 @@ interface DealsGridProps {
 function DealsGrid({ deals, isLoading, stores }: DealsGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {Array.from({ length: 6 }).map((_, i) => (
           <DealCardSkeleton key={i} />
         ))}
@@ -30,7 +30,7 @@ function DealsGrid({ deals, isLoading, stores }: DealsGridProps) {
       variants={staggerContainer}
       initial="initial"
       animate="animate"
-      className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-5"
     >
       {deals.map((deal) => (
         <motion.div key={deal.id} variants={staggerItem}>

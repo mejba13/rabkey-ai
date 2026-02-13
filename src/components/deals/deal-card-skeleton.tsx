@@ -10,22 +10,23 @@ function DealCardSkeleton({ className }: DealCardSkeletonProps) {
     <div
       className={cn(
         "flex flex-col sm:flex-row overflow-hidden rounded-xl",
-        "border border-border bg-card",
+        "bg-card/50 border border-border/30",
         className
       )}
     >
       {/* Image area */}
-      <div className="relative w-full sm:w-[200px] shrink-0 aspect-[16/10] sm:aspect-auto sm:min-h-[160px]">
+      <div className="relative w-full sm:w-[240px] shrink-0 aspect-[16/10] sm:aspect-auto sm:min-h-[180px]">
         <Skeleton className="absolute inset-0 rounded-none shimmer-skeleton" />
-        {/* Tag placeholders */}
-        <div className="absolute top-2 left-2 flex gap-1">
-          <Skeleton className="h-4 w-16 rounded-md shimmer-skeleton" />
-          <Skeleton className="h-4 w-20 rounded-md shimmer-skeleton" />
-        </div>
       </div>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-4 gap-3">
+      <div className="flex flex-col flex-1 p-4 sm:p-5 gap-3">
+        {/* Tags */}
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-4 w-16 rounded-md shimmer-skeleton" />
+          <Skeleton className="h-4 w-20 rounded-md shimmer-skeleton" />
+        </div>
+
         {/* Title */}
         <Skeleton className="h-5 w-3/4 shimmer-skeleton" />
 
@@ -38,17 +39,15 @@ function DealCardSkeleton({ className }: DealCardSkeletonProps) {
 
         {/* Price section */}
         <div className="flex items-center gap-3">
-          <Skeleton className="h-5 w-16 shimmer-skeleton" />
-          <Skeleton className="h-5 w-12 shimmer-skeleton" />
-          <Skeleton className="h-5 w-10 rounded-md shimmer-skeleton" />
+          <Skeleton className="h-6 w-20 shimmer-skeleton" />
+          <Skeleton className="h-4 w-14 shimmer-skeleton" />
         </div>
 
-        {/* Score + expiry + button */}
+        {/* Bottom row */}
         <div className="flex items-center gap-3 mt-auto">
-          <Skeleton className="h-7 w-12 rounded-lg shimmer-skeleton" />
-          <Skeleton className="h-4 w-16 shimmer-skeleton" />
+          <Skeleton className="h-4 w-20 shimmer-skeleton" />
           <div className="ml-auto">
-            <Skeleton className="h-8 w-24 rounded-lg shimmer-skeleton" />
+            <Skeleton className="h-9 w-24 rounded-lg shimmer-skeleton" />
           </div>
         </div>
       </div>

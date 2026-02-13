@@ -23,35 +23,40 @@ const recommendationConfig: Record<
     bg: string;
     border: string;
     text: string;
+    iconBg: string;
   }
 > = {
   "strong-buy": {
     label: "Strong Buy",
     icon: ShieldCheck,
-    bg: "bg-gaming-teal/10",
-    border: "border-gaming-teal/30",
+    bg: "bg-gaming-teal/[0.04]",
+    border: "border-gaming-teal/15",
     text: "text-gaming-teal",
+    iconBg: "bg-gaming-teal/10",
   },
   buy: {
     label: "Buy Now",
     icon: TrendingDown,
-    bg: "bg-gaming-blue/10",
-    border: "border-gaming-blue/30",
+    bg: "bg-gaming-blue/[0.04]",
+    border: "border-gaming-blue/15",
     text: "text-gaming-blue",
+    iconBg: "bg-gaming-blue/10",
   },
   wait: {
     label: "Wait for Drop",
     icon: Clock,
-    bg: "bg-gaming-orange/10",
-    border: "border-gaming-orange/30",
+    bg: "bg-gaming-orange/[0.04]",
+    border: "border-gaming-orange/15",
     text: "text-gaming-orange",
+    iconBg: "bg-gaming-orange/10",
   },
   "strong-wait": {
     label: "Hold Off",
     icon: AlertTriangle,
-    bg: "bg-gaming-pink/10",
-    border: "border-gaming-pink/30",
+    bg: "bg-gaming-pink/[0.04]",
+    border: "border-gaming-pink/15",
     text: "text-gaming-pink",
+    iconBg: "bg-gaming-pink/10",
   },
 };
 
@@ -73,10 +78,10 @@ function BuyWaitCard({ prediction, className }: BuyWaitCardProps) {
         <div
           className={cn(
             "flex h-10 w-10 items-center justify-center rounded-lg",
-            config.bg,
+            config.iconBg,
           )}
         >
-          <Icon size={22} className={config.text} />
+          <Icon size={20} className={config.text} />
         </div>
         <h3 className={cn("font-heading text-xl font-bold", config.text)}>
           {config.label}
@@ -84,12 +89,12 @@ function BuyWaitCard({ prediction, className }: BuyWaitCardProps) {
       </div>
 
       {/* Reasoning */}
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-3 text-[13px] leading-relaxed text-white/40">
         {prediction.reasoning}
       </p>
 
       {/* Last updated */}
-      <p className="mt-3 text-xs text-muted-foreground/70">
+      <p className="mt-3 text-[11px] text-white/20">
         Last updated {formatDate(prediction.lastUpdated)}
       </p>
     </div>

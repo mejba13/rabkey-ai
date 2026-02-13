@@ -4,11 +4,17 @@ import { cn } from "@/lib/utils";
 import { useSearchStore } from "@/stores/search-store";
 import { PlatformIcon } from "@/components/gaming";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RotateCcw } from "lucide-react";
 import type { Platform } from "@/lib/types";
 
 const platforms: { value: Platform; label: string }[] = [
@@ -30,6 +36,11 @@ export function SearchFilters({
   const { filters, updateFilter, resetFilters } = useSearchStore();
 
   const isHorizontal = layout === "horizontal";
+
+  const scoreValue =
+    filters.minDealScore && filters.minDealScore > 0
+      ? String(filters.minDealScore)
+      : "any";
 
   return (
     <div
@@ -129,39 +140,34 @@ export function SearchFilters({
         </Label>
       </div>
 
-      {/* Min deal score */}
-      <div
-        className={cn(
-          isHorizontal
-            ? "flex items-center gap-2"
-            : "space-y-2"
-        )}
-      >
+      {/* Min deal score — Select dropdown instead of slider */}
+      <div className={cn(isHorizontal ? "" : "space-y-2")}>
         {!isHorizontal && (
           <Label className="text-[10px] uppercase text-white/35 tracking-wider font-heading">
             Min Deal Score
           </Label>
         )}
-        <div className="flex items-center gap-3">
-          {isHorizontal && (
-            <span className="text-xs text-white/30 whitespace-nowrap font-heading">
-              Score:
-            </span>
-          )}
-          <Slider
-            value={[filters.minDealScore ?? 0]}
-            onValueChange={([value]) =>
-              updateFilter({ minDealScore: value === 0 ? undefined : value })
-            }
-            min={0}
-            max={100}
-            step={5}
-            className="w-24 md:w-32"
-          />
-          <span className="text-xs font-heading font-bold text-gaming-orange min-w-[2rem] text-right">
-            {filters.minDealScore ?? 0}
-          </span>
-        </div>
+        <Select
+          value={scoreValue}
+          onValueChange={(value) =>
+            updateFilter({
+              minDealScore: value === "any" ? undefined : Number(value),
+            })
+          }
+        >
+          <SelectTrigger
+            size="sm"
+            className="w-[120px] rounded-full bg-white/[0.03] border-white/[0.04] text-white/50 text-xs font-heading"
+          >
+            <SelectValue placeholder="Min Score" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">Any Score</SelectItem>
+            <SelectItem value="50">50+</SelectItem>
+            <SelectItem value="75">75+</SelectItem>
+            <SelectItem value="90">90+ Legendary</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Reset button */}
@@ -171,9 +177,9 @@ export function SearchFilters({
           resetFilters();
           onApply?.();
         }}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-semibold text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200 ml-auto"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-medium text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200 ml-auto"
       >
-        <X className="size-3" />
+        <RotateCcw size={11} />
         Reset
       </button>
 

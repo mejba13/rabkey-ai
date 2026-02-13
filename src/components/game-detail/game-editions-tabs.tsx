@@ -52,7 +52,7 @@ function GameEditionsTabs({
     <Tabs defaultValue={defaultTab} className={className}>
       <TabsList
         variant="line"
-        className="w-full justify-start border-b border-border"
+        className="w-full justify-start border-b border-white/[0.04]"
       >
         {editions.map((edition) => (
           <TabsTrigger
@@ -75,15 +75,15 @@ function GameEditionsTabs({
           <TabsContent key={edition.id} value={edition.id} className="mt-4">
             {/* Edition includes */}
             {edition.includes.length > 0 && (
-              <div className="mb-4 rounded-lg border border-border bg-gaming-surface-elevated/50 p-4">
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">
+              <div className="mb-4 rounded-lg border border-white/[0.04] bg-white/[0.02] p-4">
+                <p className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
                   Includes
                 </p>
                 <ul className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
                   {edition.includes.map((item) => (
                     <li
                       key={item}
-                      className="text-sm text-foreground before:mr-1.5 before:text-gaming-orange before:content-['•']"
+                      className="text-sm text-white/70 font-heading before:mr-1.5 before:text-gaming-orange before:content-['•']"
                     >
                       {item}
                     </li>

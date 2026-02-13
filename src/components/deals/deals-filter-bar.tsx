@@ -41,6 +41,7 @@ interface DealsFilterBarProps {
   selectedTag: DealTag | "all";
   onSelectedTagChange: (value: DealTag | "all") => void;
   onReset: () => void;
+  totalCount?: number;
 }
 
 function DealsFilterBar({
@@ -53,6 +54,7 @@ function DealsFilterBar({
   selectedTag,
   onSelectedTagChange,
   onReset,
+  totalCount,
 }: DealsFilterBarProps) {
   return (
     <div
@@ -63,20 +65,20 @@ function DealsFilterBar({
       )}
     >
       {/* Platform pill toggles */}
-      <div className="inline-flex items-center rounded-full bg-white/[0.03] border border-white/[0.04] p-1 gap-0.5">
+      <div className="inline-flex items-center rounded-full bg-white/[0.03] border border-white/[0.04] p-0.5 gap-0.5">
         {platforms.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
             type="button"
             onClick={() => onPlatformChange(value)}
             className={cn(
-              "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-heading font-semibold transition-all duration-200",
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-semibold transition-all duration-200",
               platform === value
                 ? "bg-white/[0.08] text-white shadow-sm"
                 : "text-white/35 hover:text-white/60"
             )}
           >
-            <Icon size={13} />
+            <Icon size={12} />
             <span className="hidden sm:inline">{label}</span>
           </button>
         ))}
@@ -94,7 +96,7 @@ function DealsFilterBar({
           <SelectItem value="any">Any Score</SelectItem>
           <SelectItem value="50">50+</SelectItem>
           <SelectItem value="75">75+</SelectItem>
-          <SelectItem value="90">90+</SelectItem>
+          <SelectItem value="90">90+ Legendary</SelectItem>
         </SelectContent>
       </Select>
 
@@ -129,15 +131,22 @@ function DealsFilterBar({
         </SelectContent>
       </Select>
 
-      {/* Reset */}
-      <button
-        type="button"
-        onClick={onReset}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-medium text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200 ml-auto"
-      >
-        <RotateCcw size={12} />
-        Reset
-      </button>
+      {/* Right side: count + reset */}
+      <div className="flex items-center gap-3 ml-auto">
+        {totalCount !== undefined && totalCount > 0 && (
+          <span className="text-[11px] text-white/25 font-heading hidden sm:block">
+            {totalCount} {totalCount === 1 ? "deal" : "deals"}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={onReset}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-medium text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200"
+        >
+          <RotateCcw size={11} />
+          Reset
+        </button>
+      </div>
     </div>
   );
 }

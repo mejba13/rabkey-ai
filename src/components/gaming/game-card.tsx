@@ -37,53 +37,59 @@ function GameCard({ game, className }: GameCardProps) {
             alt={game.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          {/* Subtle vignette — no heavy gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 
-          {/* Deal Score - top right */}
+          {/* Deal Score — top right */}
           <div className="absolute top-2.5 right-2.5">
             <DealScoreBadge score={game.dealScore} size="sm" />
           </div>
 
-          {/* Discount Badge + Wishlist - top left */}
-          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5">
-            {game.isOnSale && game.discount > 0 && (
+          {/* Discount Badge — top left */}
+          {game.isOnSale && game.discount > 0 && (
+            <div className="absolute top-2.5 left-2.5">
               <DiscountBadge discount={game.discount} />
-            )}
+            </div>
+          )}
+
+          {/* Wishlist — bottom right of image */}
+          <div className="absolute bottom-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <AddToWishlistButton gameId={game.id} />
           </div>
+        </div>
 
-          {/* Bottom content over gradient */}
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <h3 className="font-heading font-semibold text-white text-sm line-clamp-1 mb-1.5">
-              {game.title}
-            </h3>
+        {/* Content section below image */}
+        <div className="p-3 space-y-2">
+          {/* Title */}
+          <h3 className="font-heading font-semibold text-[13px] sm:text-sm text-white/90 line-clamp-1 group-hover:text-white transition-colors">
+            {game.title}
+          </h3>
 
-            <div className="flex items-center justify-between">
-              {/* Platform icons */}
-              <div className="flex items-center gap-1.5">
-                {game.metadata.platforms.map((platform) => (
-                  <PlatformIcon
-                    key={platform}
-                    platform={platform}
-                    size={13}
-                    className="text-white/50"
-                  />
-                ))}
-              </div>
-
-              {/* Price */}
-              <PriceTag
-                currentPrice={game.bestPrice}
-                originalPrice={
-                  game.isOnSale ? game.originalPrice : undefined
-                }
-                size="sm"
-              />
+          {/* Bottom row: platforms + price */}
+          <div className="flex items-center justify-between gap-2">
+            {/* Platform icons */}
+            <div className="flex items-center gap-1.5">
+              {game.metadata.platforms.map((platform) => (
+                <PlatformIcon
+                  key={platform}
+                  platform={platform}
+                  size={12}
+                  className="text-white/30"
+                />
+              ))}
             </div>
+
+            {/* Price */}
+            <PriceTag
+              currentPrice={game.bestPrice}
+              originalPrice={
+                game.isOnSale ? game.originalPrice : undefined
+              }
+              size="sm"
+            />
           </div>
         </div>
       </Link>

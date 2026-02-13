@@ -2,14 +2,13 @@
 
 import { useMemo } from "react";
 import { motion } from "motion/react";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Sparkles, DollarSign } from "lucide-react";
 import { staggerContainer, staggerItem } from "@/animations/variants";
 import { useGame, useGamePrices } from "@/hooks/use-games";
 import { usePriceHistory } from "@/hooks/use-price-history";
 import { usePrediction } from "@/hooks/use-predictions";
 import { useStores } from "@/hooks/use-stores";
 import { PageContainer } from "@/components/layout/page-container";
-import { SectionHeading } from "@/components/shared";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   GameHero,
@@ -29,39 +28,57 @@ interface GameDetailClientProps {
   slug: string;
 }
 
+/* ─── Section Header ────────────────────────────────────── */
+function SectionLabel({
+  icon: Icon,
+  label,
+}: {
+  icon: React.ElementType;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 mb-4">
+      <Icon size={15} className="text-white/25" />
+      <h2 className="font-heading text-sm font-bold text-white/80 tracking-wide">
+        {label}
+      </h2>
+    </div>
+  );
+}
+
 /* ─── Skeleton Loading State ──────────────────────────────── */
 function GameDetailSkeleton() {
   return (
     <div className="min-h-screen">
       {/* Hero skeleton */}
-      <div className="relative bg-gaming-surface-elevated/30 pb-10 pt-8 md:pb-14 md:pt-12">
+      <div className="relative pb-12 pt-10 md:pb-16 md:pt-14">
         <PageContainer>
-          <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
-            <Skeleton className="h-[340px] w-[250px] rounded-xl" />
-            <div className="flex flex-1 flex-col items-center gap-4 md:items-start">
-              <div className="flex gap-2">
-                <Skeleton className="h-6 w-16 rounded-full" />
-                <Skeleton className="h-6 w-16 rounded-full" />
-                <Skeleton className="h-6 w-16 rounded-full" />
+          <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-10">
+            <Skeleton className="h-[320px] w-[230px] rounded-xl" />
+            <div className="flex flex-1 flex-col items-center gap-4 md:items-start md:pt-2">
+              <div className="flex gap-1.5">
+                <Skeleton className="h-7 w-16 rounded-full" />
+                <Skeleton className="h-7 w-20 rounded-full" />
+                <Skeleton className="h-7 w-16 rounded-full" />
               </div>
               <Skeleton className="h-10 w-80" />
               <Skeleton className="h-5 w-96" />
-              <div className="flex gap-3">
-                <Skeleton className="h-8 w-20 rounded-lg" />
+              <div className="flex gap-3 mt-3">
+                <Skeleton className="h-8 w-28 rounded-lg" />
                 <Skeleton className="h-8 w-24" />
               </div>
-              <Skeleton className="h-12 w-48 rounded-lg" />
+              <Skeleton className="h-12 w-52 rounded-xl mt-3" />
             </div>
           </div>
         </PageContainer>
       </div>
 
       {/* Content skeleton */}
-      <PageContainer className="mt-8 pb-16">
+      <PageContainer className="mt-6 pb-16">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-8">
             <Skeleton className="h-40 w-full rounded-xl" />
-            <Skeleton className="h-8 w-72" />
+            <Skeleton className="h-8 w-48" />
             <Skeleton className="h-80 w-full rounded-xl" />
           </div>
           <div>
@@ -78,10 +95,10 @@ function GameNotFound() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="text-center">
-        <h1 className="font-heading text-4xl font-bold text-foreground">
+        <h1 className="font-heading text-3xl font-bold text-white/90">
           Game Not Found
         </h1>
-        <p className="mt-3 text-muted-foreground">
+        <p className="mt-3 text-white/40 text-[15px]">
           We could not find the game you are looking for. It may have been
           removed or the link may be incorrect.
         </p>
@@ -108,7 +125,6 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
     return map;
   }, [stores]);
 
-  // Find the best-priced entry from the prices list
   const bestPrice = useMemo(() => {
     if (prices.length === 0) return undefined;
     return [...prices].sort((a, b) => b.dealScore - a.dealScore)[0];
@@ -130,17 +146,17 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
       <GameHero game={game} />
 
       {/* Main Content */}
-      <PageContainer className="mt-8 pb-16">
+      <PageContainer className="mt-6 pb-20">
         <motion.div
           variants={staggerContainer}
           initial="initial"
           animate="animate"
           className="grid grid-cols-1 gap-8 lg:grid-cols-3"
         >
-          {/* Left column: deals + price comparison */}
+          {/* Left column: deals + price comparison + charts + AI */}
           <motion.div
             variants={staggerItem}
-            className="lg:col-span-2 space-y-8"
+            className="lg:col-span-2 space-y-10"
           >
             {/* Best Deal */}
             <BestDealHighlight
@@ -150,9 +166,7 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
 
             {/* Price Comparison */}
             <div id="price-comparison">
-              <h2 className="mb-4 font-heading text-xl font-bold">
-                Compare Prices
-              </h2>
+              <SectionLabel icon={DollarSign} label="Compare Prices" />
               <GameEditionsTabs
                 game={game}
                 prices={prices}
@@ -162,7 +176,7 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
 
             {/* Price History */}
             <div id="price-history">
-              <SectionHeading title="Price History" className="mb-4" />
+              <SectionLabel icon={BarChart3} label="Price History" />
               {priceHistory ? (
                 <div className="space-y-4">
                   <PriceStatsCards
@@ -172,9 +186,9 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
                   <PriceHistoryChart priceHistory={priceHistory} />
                 </div>
               ) : (
-                <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-8 text-muted-foreground">
-                  <BarChart3 className="size-5" />
-                  <span className="text-sm">
+                <div className="flex items-center gap-2 rounded-xl border border-border/30 bg-card/50 p-8 text-white/35">
+                  <BarChart3 className="size-4" />
+                  <span className="text-sm font-heading">
                     Not enough price history data available for this game yet.
                   </span>
                 </div>
@@ -183,7 +197,7 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
 
             {/* AI Insights */}
             <div id="ai-insights">
-              <SectionHeading title="AI Insights" className="mb-4" />
+              <SectionLabel icon={Sparkles} label="AI Insights" />
               {prediction ? (
                 <div className="space-y-4">
                   <BuyWaitCard prediction={prediction} />
@@ -200,7 +214,9 @@ function GameDetailClient({ slug }: GameDetailClientProps) {
 
           {/* Right column: sidebar */}
           <motion.div variants={staggerItem}>
-            <GameInfoSidebar game={game} />
+            <div className="lg:sticky lg:top-24">
+              <GameInfoSidebar game={game} />
+            </div>
           </motion.div>
         </motion.div>
       </PageContainer>

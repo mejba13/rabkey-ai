@@ -29,14 +29,14 @@ function PricePredictionCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border bg-card p-5",
+        "rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-5",
         className,
       )}
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-5">
-        <Sparkles size={18} className="text-gaming-purple" />
-        <h3 className="font-heading text-lg font-bold">AI Price Prediction</h3>
+        <Sparkles size={16} className="text-gaming-purple" />
+        <h3 className="font-heading text-sm font-bold text-white/90">AI Price Prediction</h3>
       </div>
 
       {/* Prediction Timeline */}
@@ -50,8 +50,8 @@ function PricePredictionCard({
           const isDrop = p.predictedPrice < currentPrice;
           const colorClass = isDrop ? "text-gaming-teal" : "text-gaming-coral";
           const bgClass = isDrop
-            ? "bg-gaming-teal/5 border-gaming-teal/20"
-            : "bg-gaming-coral/5 border-gaming-coral/20";
+            ? "bg-gaming-teal/[0.03] border-gaming-teal/10"
+            : "bg-gaming-coral/[0.03] border-gaming-coral/10";
 
           return (
             <motion.div
@@ -63,16 +63,16 @@ function PricePredictionCard({
               )}
             >
               {/* Time horizon label */}
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              <span className="text-[10px] font-heading font-semibold uppercase tracking-wider text-white/30">
                 {dayLabels[p.days]}
               </span>
 
               {/* Predicted price */}
               <div className={cn("mt-1.5 flex items-center justify-center gap-1", colorClass)}>
                 {isDrop ? (
-                  <TrendingDown size={14} />
+                  <TrendingDown size={13} />
                 ) : (
-                  <TrendingUp size={14} />
+                  <TrendingUp size={13} />
                 )}
                 <span className="font-heading text-base font-bold">
                   {formatPrice(p.predictedPrice)}
@@ -80,7 +80,7 @@ function PricePredictionCard({
               </div>
 
               {/* Drop probability */}
-              <p className="mt-1.5 text-xs text-muted-foreground">
+              <p className="mt-1.5 text-[11px] text-white/30">
                 {p.dropProbability}% drop chance
               </p>
 
@@ -88,9 +88,9 @@ function PricePredictionCard({
               <div className="mt-2">
                 <Progress
                   value={p.confidence}
-                  className="h-1.5"
+                  className="h-1"
                 />
-                <p className="mt-1 text-[10px] text-muted-foreground">
+                <p className="mt-1 text-[10px] text-white/25">
                   {p.confidence}% confidence
                 </p>
               </div>
@@ -100,7 +100,7 @@ function PricePredictionCard({
       </motion.div>
 
       {/* Footer */}
-      <p className="mt-4 text-xs text-muted-foreground">
+      <p className="mt-4 text-[11px] text-white/20">
         Powered by ML — Predictions based on historical pricing, sale calendars, and market signals.
       </p>
     </div>

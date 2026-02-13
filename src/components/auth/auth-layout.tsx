@@ -36,9 +36,14 @@ const features = [
 
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex relative">
-      {/* ── Full-screen YouTube video background (visible on mobile too) ── */}
+    <div className="min-h-screen relative flex items-center justify-center">
+      {/* ── Full-screen YouTube video background ── */}
       <YouTubeBackground videoId="tzKi5pxDxgw" overlayOpacity={0.7} />
+
+      {/* ── Container wrapper ── */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen flex">
+        {/* Inner layout */}
+        <div className="flex w-full min-h-[calc(100vh-4rem)] rounded-2xl overflow-hidden bg-gaming-surface-deep/80 backdrop-blur-sm shadow-2xl shadow-black/30">
 
       {/* Left panel — branding with video showing through */}
       <div className="hidden lg:flex lg:w-[480px] xl:w-[540px] flex-col relative overflow-hidden">
@@ -129,7 +134,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
 
           {/* Stats bar */}
           <motion.div
-            className="flex items-center gap-6 text-xs text-white/50 pt-6 border-t border-white/[0.08]"
+            className="flex items-center gap-6 text-xs text-white/50 pt-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -158,46 +163,30 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         </div>
       </div>
 
-      {/* Right panel — form with glassmorphic card */}
-      <div className="flex-1 flex flex-col min-h-screen relative">
-        {/* Darkened overlay for form readability */}
-        <div
-          className="absolute inset-0 hidden lg:block"
-          style={{
-            background:
-              "linear-gradient(90deg, oklch(0.159 0 0 / 40%) 0%, oklch(0.159 0 0 / 85%) 30%, oklch(0.159 0 0 / 95%) 100%)",
-          }}
-        />
-
-        {/* Mobile: heavier overlay since no left panel */}
-        <div
-          className="absolute inset-0 lg:hidden"
-          style={{
-            background: "oklch(0.159 0 0 / 80%)",
-          }}
-        />
+      {/* Right panel — form */}
+      <div className="flex-1 flex flex-col relative bg-gaming-surface-deep/95">
 
         {/* Mobile logo */}
         <div className="lg:hidden p-6 relative z-10">
           <Logo size="md" />
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-6 py-10 relative z-10">
+        <div className="flex-1 flex items-center justify-center px-6 sm:px-10 py-10 relative z-10">
           <motion.div
             className="w-full max-w-md"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            {/* Glassmorphic form container */}
-            <div className="rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] p-8 shadow-2xl shadow-black/40">
-              <div className="mb-8">
-                <h1 className="text-2xl font-heading font-bold text-white">{title}</h1>
-                <p className="text-sm text-white/50 mt-2">{subtitle}</p>
-              </div>
-              {children}
+            <div className="mb-8">
+              <h1 className="text-2xl font-heading font-bold text-white">{title}</h1>
+              <p className="text-sm text-white/50 mt-2">{subtitle}</p>
             </div>
+            {children}
           </motion.div>
+        </div>
+      </div>
+
         </div>
       </div>
     </div>

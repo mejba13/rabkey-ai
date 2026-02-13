@@ -6,9 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { DealScoreBadge } from "@/components/gaming";
 import { cn } from "@/lib/utils";
 import type { DealScoreBreakdown } from "@/lib/types";
@@ -86,15 +84,15 @@ function DealScoreBreakdownModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md bg-gaming-surface border-border">
+      <DialogContent className="max-w-md bg-card/95 backdrop-blur-xl border-border/30">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-3 font-heading">
+          <DialogTitle className="flex items-center gap-3 font-heading text-white/90">
             Deal Score Breakdown
             <DealScoreBadge score={dealScore} size="md" />
           </DialogTitle>
         </DialogHeader>
 
-        <Separator className="my-1" />
+        <div className="h-px bg-white/[0.04] my-1" />
 
         <div className="space-y-4">
           {factors.map((factor) => {
@@ -106,15 +104,12 @@ function DealScoreBreakdownModal({
               <div key={factor.label} className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-heading font-medium text-white/70">
                       {factor.label}
                     </span>
-                    <Badge
-                      variant="outline"
-                      className="h-5 px-1.5 text-[10px] font-mono"
-                    >
+                    <span className="inline-flex items-center h-5 px-1.5 rounded text-[10px] font-mono text-white/30 bg-white/[0.04] border border-white/[0.06]">
                       {factor.weight}%
-                    </Badge>
+                    </span>
                   </div>
                   <span
                     className={cn(
@@ -128,12 +123,12 @@ function DealScoreBreakdownModal({
 
                 <Progress
                   value={factor.score}
-                  className={cn("h-2", getProgressColor(factor.score))}
+                  className={cn("h-1.5", getProgressColor(factor.score))}
                 />
 
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[11px] text-white/25">
                   Weighted contribution: {factor.score} x {factor.weight}% ={" "}
-                  <span className="font-mono font-semibold">
+                  <span className="font-mono font-semibold text-white/40">
                     {contribution}
                   </span>
                 </p>
@@ -142,9 +137,9 @@ function DealScoreBreakdownModal({
           })}
         </div>
 
-        <Separator className="my-1" />
+        <div className="h-px bg-white/[0.04] my-1" />
 
-        <p className="text-xs text-muted-foreground leading-relaxed">
+        <p className="text-[11px] text-white/25 leading-relaxed">
           Deal scores are calculated using a weighted combination of 7 factors.
           Each factor is scored 0-100, then multiplied by its weight to determine
           its contribution to the final score. Higher scores indicate better deals.

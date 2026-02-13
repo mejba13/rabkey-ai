@@ -57,8 +57,8 @@ function ChartTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-border bg-gaming-surface-elevated px-3 py-2 shadow-lg">
-      <p className="text-xs text-muted-foreground">
+    <div className="rounded-lg border border-white/[0.06] bg-card/95 backdrop-blur-xl px-3 py-2 shadow-lg">
+      <p className="text-[11px] text-white/40 font-heading">
         {label ? formatDate(label) : ""}
       </p>
       <p className="font-heading font-bold text-gaming-teal">
@@ -85,7 +85,6 @@ function PriceHistoryChart({ priceHistory, className }: PriceHistoryChartProps) 
     [filteredPoints],
   );
 
-  // Calculate Y-axis domain with some padding
   const [yMin, yMax] = useMemo(() => {
     if (chartData.length === 0) return [0, 100];
     const prices = chartData.map((d) => d.price);
@@ -96,18 +95,19 @@ function PriceHistoryChart({ priceHistory, className }: PriceHistoryChartProps) 
   }, [chartData]);
 
   return (
-    <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
-      {/* Time range selector */}
-      <div className="mb-4 flex gap-1 rounded-lg bg-gaming-surface p-1 w-fit">
+    <div className={cn("rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm p-5", className)}>
+      {/* Time range selector — pill-shaped toggle */}
+      <div className="mb-5 inline-flex items-center rounded-full bg-white/[0.03] border border-white/[0.04] p-0.5 gap-0.5">
         {(Object.keys(timeRangeLabels) as TimeRange[]).map((key) => (
           <button
             key={key}
+            type="button"
             onClick={() => setRange(key)}
             className={cn(
-              "rounded-md px-3 py-1.5 text-xs font-heading font-semibold transition-colors",
+              "px-3 py-1.5 rounded-full text-xs font-heading font-semibold transition-all duration-200",
               range === key
-                ? "bg-gaming-surface-elevated text-gaming-teal"
-                : "text-muted-foreground hover:text-foreground",
+                ? "bg-white/[0.08] text-gaming-teal shadow-sm"
+                : "text-white/35 hover:text-white/60",
             )}
           >
             {timeRangeLabels[key]}
@@ -121,13 +121,13 @@ function PriceHistoryChart({ priceHistory, className }: PriceHistoryChartProps) 
           <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <defs>
               <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00D4AA" stopOpacity={0.3} />
+                <stop offset="5%" stopColor="#00D4AA" stopOpacity={0.2} />
                 <stop offset="95%" stopColor="#00D4AA" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="#2D2D3D"
+              stroke="rgba(255,255,255,0.03)"
               vertical={false}
             />
             <XAxis
@@ -139,16 +139,16 @@ function PriceHistoryChart({ priceHistory, className }: PriceHistoryChartProps) 
                   day: "numeric",
                 });
               }}
-              tick={{ fill: "#A0A0B0", fontSize: 11 }}
-              axisLine={{ stroke: "#2D2D3D" }}
+              tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }}
+              axisLine={{ stroke: "rgba(255,255,255,0.04)" }}
               tickLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
               domain={[yMin, yMax]}
               tickFormatter={(val: number) => `$${val}`}
-              tick={{ fill: "#A0A0B0", fontSize: 11 }}
-              axisLine={{ stroke: "#2D2D3D" }}
+              tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 11 }}
+              axisLine={{ stroke: "rgba(255,255,255,0.04)" }}
               tickLine={false}
               width={50}
             />
@@ -163,14 +163,14 @@ function PriceHistoryChart({ priceHistory, className }: PriceHistoryChartProps) 
               activeDot={{
                 r: 4,
                 fill: "#00D4AA",
-                stroke: "#1A1A2E",
+                stroke: "rgba(0,0,0,0.4)",
                 strokeWidth: 2,
               }}
             />
           </AreaChart>
         </ResponsiveContainer>
       ) : (
-        <div className="flex h-[280px] items-center justify-center text-muted-foreground text-sm">
+        <div className="flex h-[280px] items-center justify-center text-white/30 text-sm font-heading">
           No data available for this time range.
         </div>
       )}

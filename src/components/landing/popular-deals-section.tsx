@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -9,8 +10,9 @@ import {
   TrendingDown,
   Clock,
   Store,
-  Timer,
   ExternalLink,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/layout/page-container";
@@ -39,15 +41,45 @@ const storeNames: Record<string, string> = {
   s6: "Fanatical",
 };
 
-const recommendationLabels: Record<string, string> = {
-  "strong-buy": "Strong Buy",
-  buy: "Buy",
-  wait: "Wait",
-  avoid: "Avoid",
+const recommendationStyles: Record<
+  string,
+  { label: string; class: string; bg: string }
+> = {
+  "strong-buy": { label: "Strong Buy", class: "text-gaming-teal", bg: "bg-gaming-teal/10 border-gaming-teal/20" },
+  buy: { label: "Buy", class: "text-gaming-orange", bg: "bg-gaming-orange/10 border-gaming-orange/20" },
+  wait: { label: "Wait", class: "text-white/40", bg: "bg-white/[0.04] border-white/[0.06]" },
+  avoid: { label: "Avoid", class: "text-gaming-pink", bg: "bg-gaming-pink/10 border-gaming-pink/20" },
 };
 
 /* ═══════════════════════════════════════════════
-   Deal Tag Pill
+   Live Timer
+   ═══════════════════════════════════════════════ */
+
+function LiveUpdateBadge() {
+  const [minutes, setMinutes] = useState(3);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMinutes((prev) => (prev >= 59 ? 1 : prev + 1));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gaming-teal/60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-gaming-teal" />
+      </span>
+      <span className="text-[11px] font-heading text-white/30">
+        Updated {minutes}m ago
+      </span>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════
+   Deal Tag
    ═══════════════════════════════════════════════ */
 
 function DealTag({ tag }: { tag: string }) {
@@ -57,11 +89,13 @@ function DealTag({ tag }: { tag: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 px-2.5 py-1 rounded-md",
-        "text-[10px] font-heading font-semibold uppercase tracking-wide",
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded-md",
+        "text-[9px] font-heading font-bold uppercase tracking-wider",
         "backdrop-blur-md border",
-        isFlash && "bg-gaming-coral/15 text-gaming-coral border-gaming-coral/20",
-        isHistLow && "bg-gaming-teal/15 text-gaming-teal border-gaming-teal/20",
+        isFlash &&
+          "bg-gaming-coral/15 text-gaming-coral border-gaming-coral/20",
+        isHistLow &&
+          "bg-gaming-teal/15 text-gaming-teal border-gaming-teal/20",
         !isFlash &&
           !isHistLow &&
           "bg-gaming-orange/15 text-gaming-orange border-gaming-orange/20"
@@ -75,196 +109,212 @@ function DealTag({ tag }: { tag: string }) {
 }
 
 /* ═══════════════════════════════════════════════
-   Featured Deal Card (hero — col-span-2, row-span-2)
+   Featured Deal Card (Hero — spans 2 cols + 2 rows)
    ═══════════════════════════════════════════════ */
 
 function FeaturedDealCard({ deal }: { deal: Deal }) {
   const store = storeNames[deal.storeId] || "Store";
-  const rec = recommendationLabels[deal.recommendation] || deal.recommendation;
+  const rec = recommendationStyles[deal.recommendation];
 
   return (
     <motion.div
       variants={staggerItem}
-      className={cn(
-        "md:col-span-2 md:row-span-2",
-        "group relative rounded-2xl overflow-hidden",
-        "bg-card/50 border border-border/30",
-        "hover:border-gaming-orange/20 transition-all duration-300"
-      )}
+      className="group relative col-span-1 md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02]"
     >
-      {/* Full-bleed image with overlay */}
-      <div className="relative w-full aspect-[16/10] md:aspect-auto md:h-full md:min-h-[480px]">
-        <Image
-          src={deal.coverImage}
-          alt={deal.title}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-          sizes="(max-width: 768px) 100vw, 66vw"
-          priority
-        />
+      <Link href={`/game/${deal.gameId}`} className="block h-full">
+        {/* Full image background */}
+        <div className="relative h-full min-h-[400px] md:min-h-[500px] overflow-hidden">
+          <Image
+            src={deal.coverImage}
+            alt={deal.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
+          />
 
-        {/* Multi-layer gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/5" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+          {/* Layered gradients */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
 
-        {/* Tags — top left */}
-        <div className="absolute top-5 left-5 flex items-center gap-2">
-          {deal.tags.slice(0, 2).map((tag) => (
-            <DealTag key={tag} tag={tag} />
-          ))}
-        </div>
-
-        {/* Deal Score — top right */}
-        <div className="absolute top-5 right-5">
-          <DealScoreBadge score={deal.dealScore} size="lg" />
-        </div>
-
-        {/* Content — bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-          <div className="space-y-4">
-            {/* Title & meta */}
-            <div>
-              <h3 className="font-heading font-bold text-xl md:text-2xl lg:text-3xl text-white leading-tight">
-                {deal.title}
-              </h3>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className="text-sm text-white/40 font-heading uppercase">
-                  {deal.platform}
-                </span>
-                <span className="h-1 w-1 rounded-full bg-white/20" />
-                <span className="flex items-center gap-1 text-sm text-white/50">
-                  <Store className="h-3 w-3" />
-                  {store}
-                </span>
-                <span className="h-1 w-1 rounded-full bg-white/20" />
-                <span
-                  className={cn(
-                    "text-sm font-heading font-semibold",
-                    deal.recommendation === "strong-buy"
-                      ? "text-gaming-teal"
-                      : deal.recommendation === "buy"
-                        ? "text-gaming-orange"
-                        : "text-muted-foreground"
-                  )}
-                >
-                  {rec}
-                </span>
-              </div>
-            </div>
-
-            {/* Price row */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <PriceTag
-                currentPrice={deal.currentPrice}
-                originalPrice={deal.originalPrice}
-                size="lg"
-              />
-              <DiscountBadge discount={deal.discount} />
-              {deal.expiresAt && (
-                <span className="flex items-center gap-1.5 text-xs text-white/40 font-heading">
-                  <Clock className="h-3 w-3" />
-                  Limited time
+          {/* Top bar: Tag + Score */}
+          <div className="absolute top-4 inset-x-4 flex items-start justify-between">
+            <div className="flex flex-col gap-2">
+              {deal.tags[0] && <DealTag tag={deal.tags[0]} />}
+              {rec && (
+                <span className={cn(
+                  "inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-heading font-bold border",
+                  rec.bg, rec.class
+                )}>
+                  <Sparkles className="h-2.5 w-2.5" />
+                  {rec.label}
                 </span>
               )}
             </div>
+            <DealScoreBadge score={deal.dealScore} size="md" />
+          </div>
 
-            {/* CTA */}
-            <GamingButton
-              size="lg"
-              className="w-full sm:w-auto"
-              onClick={() => window.open(deal.url, "_blank")}
-            >
-              <Flame className="h-4 w-4" />
-              Grab This Deal
-            </GamingButton>
+          {/* Bottom content */}
+          <div className="absolute bottom-0 inset-x-0 p-5 md:p-7">
+            {/* Featured label */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-heading font-bold uppercase tracking-wider bg-gaming-orange/90 text-black">
+                <Flame className="h-2.5 w-2.5" />
+                Top Deal
+              </span>
+            </div>
+
+            <h3 className="font-heading font-bold text-xl md:text-2xl text-white leading-tight mb-3 group-hover:text-gaming-orange transition-colors duration-300">
+              {deal.title}
+            </h3>
+
+            {/* Meta */}
+            <div className="flex items-center gap-2 mb-4 text-[11px] text-white/35 font-heading">
+              <span className="uppercase tracking-wider">{deal.platform}</span>
+              <span className="w-1 h-1 rounded-full bg-white/15" />
+              <span className="flex items-center gap-1">
+                <Store className="h-3 w-3" />
+                {store}
+              </span>
+              {deal.expiresAt && (
+                <>
+                  <span className="w-1 h-1 rounded-full bg-white/15" />
+                  <span className="flex items-center gap-1 text-gaming-coral/70">
+                    <Clock className="h-3 w-3" />
+                    Limited Time
+                  </span>
+                </>
+              )}
+            </div>
+
+            {/* Price + CTA */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <PriceTag
+                  currentPrice={deal.currentPrice}
+                  originalPrice={deal.originalPrice}
+                  size="lg"
+                />
+                <DiscountBadge discount={deal.discount} />
+              </div>
+
+              <GamingButton
+                size="md"
+                className="rounded-xl group/btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(deal.url, "_blank");
+                }}
+              >
+                Grab This Deal
+                <ExternalLink className="h-3.5 w-3.5 ml-1 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+              </GamingButton>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 }
 
 /* ═══════════════════════════════════════════════
-   Supporting Deal Card (compact)
+   Compact Deal Card
    ═══════════════════════════════════════════════ */
 
-function SupportingDealCard({ deal }: { deal: Deal }) {
+function CompactDealCard({ deal }: { deal: Deal }) {
   const store = storeNames[deal.storeId] || "Store";
+  const rec = recommendationStyles[deal.recommendation];
 
   return (
     <motion.div
       variants={staggerItem}
       whileHover={{
         y: -4,
-        transition: { type: "spring", stiffness: 300, damping: 25 },
+        transition: { type: "spring" as const, stiffness: 300, damping: 25 },
       }}
       className={cn(
         "group flex flex-col rounded-2xl overflow-hidden",
-        "bg-card/50 border border-border/30",
-        "hover:border-gaming-orange/20 transition-all duration-300"
+        "bg-white/[0.02] border border-white/[0.06]",
+        "hover:border-white/[0.12] transition-all duration-300",
+        "hover:shadow-xl hover:shadow-black/20"
       )}
     >
       {/* Image */}
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-gaming-surface">
+      <div className="relative aspect-[16/9] w-full overflow-hidden">
         <Image
           src={deal.coverImage}
           alt={deal.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-        {/* Deal Score */}
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent" />
+
+        {/* Deal score — top right */}
         <div className="absolute top-3 right-3">
           <DealScoreBadge score={deal.dealScore} size="sm" />
         </div>
 
-        {/* Tags */}
+        {/* Tags — top left */}
         {deal.tags[0] && (
           <div className="absolute top-3 left-3">
             <DealTag tag={deal.tags[0]} />
           </div>
         )}
 
-        {/* Expiry badge */}
-        {deal.expiresAt && (
-          <div className="absolute bottom-3 left-3">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[9px] font-heading font-medium text-white/60 border border-white/10">
-              <Timer className="h-2.5 w-2.5" />
-              Limited time
-            </span>
+        {/* Price overlay — bottom of image */}
+        <div className="absolute bottom-0 inset-x-0 px-4 pb-3">
+          <div className="flex items-center gap-2">
+            <PriceTag
+              currentPrice={deal.currentPrice}
+              originalPrice={deal.originalPrice}
+              size="md"
+            />
+            <DiscountBadge discount={deal.discount} />
           </div>
-        )}
+        </div>
       </div>
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 gap-3">
         <div className="flex-1">
-          <h3 className="font-heading font-semibold text-sm text-foreground/90 line-clamp-1">
+          <h3 className="font-heading font-bold text-sm text-white line-clamp-1 group-hover:text-white/90 transition-colors">
             {deal.title}
           </h3>
-          <p className="flex items-center gap-1.5 text-xs text-muted-foreground/50 mt-1 font-heading">
-            <span className="uppercase">{deal.platform}</span>
-            <span className="h-0.5 w-0.5 rounded-full bg-muted-foreground/30" />
-            {store}
-          </p>
-        </div>
 
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <PriceTag
-              currentPrice={deal.currentPrice}
-              originalPrice={deal.originalPrice}
-              size="sm"
-            />
-            <DiscountBadge discount={deal.discount} />
+          {/* Meta row */}
+          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+            <span className="text-[10px] text-white/30 font-heading uppercase tracking-wider">
+              {deal.platform}
+            </span>
+            <span className="h-0.5 w-0.5 rounded-full bg-white/15" />
+            <span className="flex items-center gap-1 text-[10px] text-white/30 font-heading">
+              <Store className="h-2.5 w-2.5" />
+              {store}
+            </span>
+            {rec && (
+              <>
+                <span className="h-0.5 w-0.5 rounded-full bg-white/15" />
+                <span
+                  className={cn(
+                    "text-[10px] font-heading font-semibold",
+                    rec.class
+                  )}
+                >
+                  {rec.label}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
+        {/* CTA */}
         <GamingButton
           size="sm"
-          className="w-full group/btn"
+          className="w-full h-9 rounded-xl text-xs group/btn"
           onClick={() => window.open(deal.url, "_blank")}
         >
           Grab Deal
@@ -276,127 +326,153 @@ function SupportingDealCard({ deal }: { deal: Deal }) {
 }
 
 /* ═══════════════════════════════════════════════
-   Skeleton Loading States
+   Skeletons
    ═══════════════════════════════════════════════ */
 
-function DealCardSkeleton({ featured = false }: { featured?: boolean }) {
+function FeaturedSkeleton() {
   return (
-    <div
-      className={cn(
-        "rounded-2xl border border-border/20 bg-card/30 overflow-hidden",
-        featured && "md:col-span-2 md:row-span-2"
-      )}
-    >
-      <Skeleton
-        className={cn(
-          "w-full shimmer-skeleton",
-          featured ? "aspect-[16/10] md:aspect-auto md:min-h-[480px]" : "aspect-[16/9]"
-        )}
-      />
-      {!featured && (
-        <div className="p-4 space-y-3">
-          <Skeleton className="h-4 w-3/4 shimmer-skeleton" />
-          <Skeleton className="h-3 w-1/3 shimmer-skeleton" />
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-5 w-16 shimmer-skeleton" />
-            <Skeleton className="h-4 w-10 shimmer-skeleton" />
-          </div>
-          <Skeleton className="h-8 w-full shimmer-skeleton rounded-lg" />
-        </div>
-      )}
+    <div className="col-span-1 md:col-span-2 md:row-span-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      <Skeleton className="w-full h-full min-h-[400px] md:min-h-[500px] shimmer-skeleton" />
+    </div>
+  );
+}
+
+function CompactSkeleton() {
+  return (
+    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
+      <Skeleton className="w-full aspect-[16/9] shimmer-skeleton" />
+      <div className="p-4 space-y-3">
+        <Skeleton className="h-4 w-3/4 shimmer-skeleton" />
+        <Skeleton className="h-3 w-2/5 shimmer-skeleton" />
+        <Skeleton className="h-9 w-full rounded-xl shimmer-skeleton" />
+      </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════
-   Section Export
+   Section
    ═══════════════════════════════════════════════ */
 
 export function PopularDealsSection() {
-  const { data: deals, isLoading } = useFeaturedDeals(6);
+  const { data: deals, isLoading } = useFeaturedDeals(7);
+
   const featured = deals?.[0];
-  const sideDeals = deals?.slice(1, 3);
-  const bottomDeals = deals?.slice(3, 6);
+  const rest = deals?.slice(1);
 
   return (
-    <section className="relative py-28 lg:py-32 overflow-hidden">
-      {/* Top divider */}
+    <section className="relative py-24 lg:py-32 overflow-hidden">
+      {/* Section divider */}
       <div className="pointer-events-none absolute inset-x-0 top-0">
         <div
           className="mx-auto h-px w-2/3"
           style={{
             background:
-              "linear-gradient(to right, transparent, oklch(0.705 0.193 39.221 / 15%), transparent)",
+              "linear-gradient(to right, transparent, oklch(0.705 0.193 39.221 / 12%), transparent)",
           }}
         />
       </div>
 
+      {/* Ambient background glow */}
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full bg-gaming-orange/[0.02] blur-[120px]" />
+
       <PageContainer>
-        {/* Section Header */}
+        {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14"
+          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12 lg:mb-14"
         >
           <div>
-            <span className="inline-block text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-gaming-coral/80 mb-4">
+            <span
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-5",
+                "bg-gaming-coral/[0.06] border border-gaming-coral/10",
+                "text-[10px] font-heading font-semibold uppercase tracking-[0.2em] text-gaming-coral/80"
+              )}
+            >
+              <Flame size={11} />
               Hot Deals
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
               Today&apos;s{" "}
               <GradientText variant="primary">Hottest Deals</GradientText>
             </h2>
-            <p className="text-muted-foreground/60 mt-2 text-base max-w-md">
-              AI-curated deals with the highest scores right now
+            <p className="text-white/35 mt-3 text-base max-w-lg leading-relaxed">
+              AI-curated deals with the highest scores — handpicked from 50+
+              stores, updated every hour.
             </p>
           </div>
-          <Link
-            href="/deals"
-            className={cn(
-              "inline-flex items-center gap-2",
-              "text-sm font-heading font-semibold text-gaming-orange/80",
-              "hover:text-gaming-orange transition-colors",
-              "group shrink-0"
-            )}
-          >
-            View All Deals
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+
+          <div className="flex items-center gap-4 shrink-0">
+            <LiveUpdateBadge />
+            <Link
+              href="/deals"
+              className={cn(
+                "inline-flex items-center gap-2",
+                "px-5 py-2.5 rounded-xl",
+                "text-xs font-heading font-semibold",
+                "text-gaming-orange/80 hover:text-gaming-orange",
+                "bg-gaming-orange/[0.04] hover:bg-gaming-orange/[0.08]",
+                "border border-gaming-orange/[0.08] hover:border-gaming-orange/15",
+                "transition-all duration-200 group"
+              )}
+            >
+              View All Deals
+              <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
         </motion.div>
 
-        {/* Bento Grid */}
+        {/* ── Bento Grid: Featured + Compact ── */}
         <motion.div
           variants={staggerContainer}
           initial="initial"
           whileInView="animate"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-3.5"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5"
         >
           {isLoading ? (
             <>
-              <DealCardSkeleton featured />
-              {Array.from({ length: 5 }).map((_, i) => (
-                <DealCardSkeleton key={i} />
+              <FeaturedSkeleton />
+              {Array.from({ length: 4 }).map((_, i) => (
+                <CompactSkeleton key={i} />
               ))}
             </>
           ) : (
             <>
-              {/* Featured hero card — col-span-2, row-span-2 */}
+              {/* Featured — spans 2 cols + 2 rows on md+ */}
               {featured && <FeaturedDealCard deal={featured} />}
 
-              {/* Side cards — right column, stacked */}
-              {sideDeals?.map((deal) => (
-                <SupportingDealCard key={deal.id} deal={deal} />
-              ))}
-
-              {/* Bottom row — 3 equal cards */}
-              {bottomDeals?.map((deal) => (
-                <SupportingDealCard key={deal.id} deal={deal} />
+              {/* Remaining cards */}
+              {rest?.map((deal) => (
+                <CompactDealCard key={deal.id} deal={deal} />
               ))}
             </>
           )}
+        </motion.div>
+
+        {/* ── Bottom CTA ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
+        >
+          <p className="text-xs text-white/20 font-heading">
+            Showing top {deals?.length ?? 7} AI-scored deals &middot; Updated
+            every hour
+          </p>
+          <Link
+            href="/deals"
+            className="inline-flex items-center gap-1.5 text-xs font-heading font-medium text-gaming-orange/50 hover:text-gaming-orange/80 transition-colors"
+          >
+            Browse all deals
+            <ChevronRight className="h-3 w-3" />
+          </Link>
         </motion.div>
       </PageContainer>
     </section>

@@ -17,27 +17,25 @@ function GameCardSkeleton({ className }: GameCardSkeletonProps) {
       <div className="relative aspect-[16/10] w-full">
         <Skeleton className="absolute inset-0 rounded-none shimmer-skeleton" />
 
-        {/* Score badge placeholder - top right */}
+        {/* Score badge placeholder — top right */}
         <div className="absolute top-2.5 right-2.5">
           <Skeleton className="h-5 w-10 rounded-lg shimmer-skeleton" />
         </div>
+      </div>
 
-        {/* Bottom content area */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 space-y-2">
-          {/* Title */}
-          <Skeleton className="h-4 w-3/4 shimmer-skeleton" />
+      {/* Content area below image */}
+      <div className="p-3 space-y-2">
+        {/* Title */}
+        <Skeleton className="h-4 w-3/4 shimmer-skeleton" />
 
-          <div className="flex items-center justify-between">
-            {/* Platform icons row */}
-            <div className="flex items-center gap-1.5">
-              <Skeleton className="h-3.5 w-3.5 rounded shimmer-skeleton" />
-              <Skeleton className="h-3.5 w-3.5 rounded shimmer-skeleton" />
-              <Skeleton className="h-3.5 w-3.5 rounded shimmer-skeleton" />
-            </div>
-
-            {/* Price */}
-            <Skeleton className="h-4 w-16 shimmer-skeleton" />
+        {/* Bottom row: platforms + price */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="h-3 w-3 rounded shimmer-skeleton" />
+            <Skeleton className="h-3 w-3 rounded shimmer-skeleton" />
+            <Skeleton className="h-3 w-3 rounded shimmer-skeleton" />
           </div>
+          <Skeleton className="h-4 w-14 shimmer-skeleton" />
         </div>
       </div>
     </div>

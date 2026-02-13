@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ExternalLink, Globe } from "lucide-react";
+import { Globe, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-media-query";
 import type { Price, Store } from "@/lib/types";
@@ -10,7 +10,6 @@ import {
   PriceTag,
   DiscountBadge,
   StoreTrustBadge,
-  GamingButton,
 } from "@/components/gaming";
 import {
   Table,
@@ -53,8 +52,8 @@ function PriceComparisonTable({
 
   if (sortedPrices.length === 0) {
     return (
-      <div className={cn("rounded-xl border border-border bg-card p-8 text-center", className)}>
-        <p className="text-muted-foreground">
+      <div className={cn("rounded-xl border border-border/30 bg-card/50 p-8 text-center", className)}>
+        <p className="text-white/40 text-sm">
           No prices available for this edition.
         </p>
       </div>
@@ -79,27 +78,27 @@ function PriceComparisonTable({
 
   // Desktop: table layout
   return (
-    <div className={cn("rounded-xl border border-border bg-card overflow-hidden", className)}>
+    <div className={cn("rounded-xl border border-border/30 bg-card/50 backdrop-blur-sm overflow-hidden", className)}>
       <Table>
         <TableHeader>
-          <TableRow className="border-border hover:bg-transparent">
-            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+          <TableRow className="border-white/[0.04] hover:bg-transparent">
+            <TableHead className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
               Store
             </TableHead>
-            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+            <TableHead className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
               Price
             </TableHead>
-            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+            <TableHead className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
               Discount
             </TableHead>
-            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
+            <TableHead className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
               Deal Score
             </TableHead>
-            <TableHead className="text-xs uppercase tracking-wider text-muted-foreground">
-              <Globe size={14} className="inline mr-1" />
+            <TableHead className="text-[10px] uppercase tracking-wider text-white/30 font-heading">
+              <Globe size={11} className="inline mr-1 opacity-60" />
               Region
             </TableHead>
-            <TableHead className="text-right text-xs uppercase tracking-wider text-muted-foreground">
+            <TableHead className="text-right text-[10px] uppercase tracking-wider text-white/30 font-heading">
               Action
             </TableHead>
           </TableRow>
@@ -113,19 +112,18 @@ function PriceComparisonTable({
               <TableRow
                 key={price.id}
                 className={cn(
-                  "border-border transition-colors hover:bg-gaming-surface-elevated/50",
-                  isBest &&
-                    "border-l-4 border-l-gaming-orange bg-gaming-orange/5",
+                  "border-white/[0.03] transition-colors hover:bg-white/[0.02]",
+                  isBest && "border-l-2 border-l-gaming-orange bg-gaming-orange/[0.03]",
                 )}
               >
                 {/* Store */}
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gaming-surface-elevated text-xs font-bold text-muted-foreground">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.06] text-xs font-bold font-heading text-white/50">
                       {store?.name.charAt(0) ?? "?"}
                     </div>
                     <div>
-                      <p className="font-medium text-sm">
+                      <p className="font-heading font-medium text-sm text-white/80">
                         {store?.name ?? "Unknown"}
                       </p>
                       {store && (
@@ -154,7 +152,7 @@ function PriceComparisonTable({
                   {price.discount > 0 ? (
                     <DiscountBadge discount={price.discount} />
                   ) : (
-                    <span className="text-xs text-muted-foreground">--</span>
+                    <span className="text-xs text-white/20">--</span>
                   )}
                 </TableCell>
 
@@ -165,21 +163,29 @@ function PriceComparisonTable({
 
                 {/* Region */}
                 <TableCell>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-white/40">
                     {price.region}
                   </span>
                 </TableCell>
 
                 {/* Action */}
                 <TableCell className="text-right">
-                  <GamingButton
-                    variant={isBest ? "primary" : "outline"}
-                    size="sm"
+                  <button
+                    type="button"
                     onClick={() => window.open(price.url, "_blank")}
+                    className={cn(
+                      "inline-flex items-center gap-1.5",
+                      "px-3.5 py-1.5 rounded-lg",
+                      "text-xs font-heading font-semibold",
+                      "transition-all duration-200",
+                      isBest
+                        ? "bg-gradient-to-r from-gaming-orange to-gaming-coral text-white hover:shadow-md hover:shadow-gaming-orange/20"
+                        : "bg-white/[0.04] border border-white/[0.06] text-white/60 hover:bg-gaming-orange/10 hover:border-gaming-orange/20 hover:text-gaming-orange",
+                    )}
                   >
                     Get Deal
-                    <ExternalLink size={12} />
-                  </GamingButton>
+                    <ArrowUpRight size={11} className="opacity-60" />
+                  </button>
                 </TableCell>
               </TableRow>
             );
