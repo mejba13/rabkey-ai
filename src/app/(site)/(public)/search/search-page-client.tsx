@@ -4,8 +4,7 @@ import { useState, useCallback } from "react";
 import { motion } from "motion/react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
-import { SectionHeading } from "@/components/shared";
-import { EmptyState } from "@/components/shared";
+import { GradientText, EmptyState } from "@/components/shared";
 import { SearchBar } from "@/components/search/search-bar";
 import { SearchFilters } from "@/components/search/search-filters";
 import { SearchResultsGrid } from "@/components/search/search-results-grid";
@@ -25,7 +24,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { fadeInUp } from "@/animations/variants";
+import { cn } from "@/lib/utils";
 import type { Game } from "@/lib/types";
 
 export function SearchPageClient() {
@@ -37,12 +36,9 @@ export function SearchPageClient() {
 
   const { data, isLoading, isFetching } = useSearchGames(filters, page);
 
-  // Accumulate games across pages
   const hasMore = data?.hasMore ?? false;
   const totalCount = data?.totalCount ?? 0;
 
-  // When page 1 data arrives, reset accumulated games
-  // When subsequent pages arrive, append
   if (data && page === 1 && data.games !== allGames) {
     if (allGames.length === 0 || allGames[0]?.id !== data.games[0]?.id) {
       setAllGames(data.games);
@@ -64,7 +60,6 @@ export function SearchPageClient() {
 
   const infiniteScrollRef = useInfiniteScroll(handleLoadMore);
 
-  // Reset page when filters change
   const currentFiltersKey = JSON.stringify(filters);
   const [prevFiltersKey, setPrevFiltersKey] = useState(currentFiltersKey);
   if (currentFiltersKey !== prevFiltersKey) {
@@ -78,72 +73,102 @@ export function SearchPageClient() {
   const showResults = displayGames.length > 0;
 
   return (
-    <PageContainer className="py-8 md:py-12">
+    <PageContainer className="py-12 md:py-16 lg:py-20">
+      {/* ── Page Header ── */}
       <motion.div
-        variants={fadeInUp}
-        initial="initial"
-        animate="animate"
-        className="space-y-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-12 lg:mb-16"
       >
-        {/* Page heading */}
-        <SectionHeading
-          title="Search Games"
-          subtitle="Compare prices from 50+ stores and find the best deals"
-        />
+        <span className="inline-block text-[11px] font-heading font-semibold uppercase tracking-[0.2em] text-gaming-orange/80 mb-4">
+          Search
+        </span>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold tracking-tight mb-4">
+          Find Your{" "}
+          <GradientText variant="primary">Best Price</GradientText>
+        </h1>
+        <p className="text-white/50 max-w-lg mx-auto text-base lg:text-lg leading-relaxed">
+          Compare prices from 50+ stores and find the best deals
+        </p>
+      </motion.div>
 
-        {/* Search bar */}
+      {/* ── Search Bar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+        className="max-w-2xl mx-auto mb-8"
+      >
         <SearchBar />
+      </motion.div>
 
-        {/* Toolbar: filters, sort, view toggle */}
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            {/* Mobile: Sheet trigger for filters */}
-            {isMobile ? (
-              <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 shrink-0"
-                  >
-                    <SlidersHorizontal className="size-4" />
-                    Filters
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[320px] overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>Filters</SheetTitle>
-                    <SheetDescription>
-                      Refine your search results
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="px-4 pb-4">
-                    <SearchFilters
-                      layout="vertical"
-                      onApply={() => setFiltersOpen(false)}
-                    />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            ) : (
-              <SearchFilters layout="horizontal" />
-            )}
-          </div>
-
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Result count */}
-            {!isLoading && totalCount > 0 && (
-              <span className="text-sm text-muted-foreground hidden sm:block">
-                {totalCount} {totalCount === 1 ? "result" : "results"}
-              </span>
-            )}
-
-            <SearchSortControls />
-            <ViewToggle />
-          </div>
+      {/* ── Toolbar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+        className={cn(
+          "flex items-center justify-between gap-3 flex-wrap mb-8",
+          "p-3 rounded-xl",
+          "bg-white/[0.02] border border-white/[0.05]"
+        )}
+      >
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          {isMobile ? (
+            <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <SheetTrigger asChild>
+                <button
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-full",
+                    "bg-white/[0.04] border border-white/[0.06]",
+                    "text-xs font-heading font-semibold text-white/50",
+                    "hover:text-white/70 hover:bg-white/[0.06]",
+                    "transition-all duration-200"
+                  )}
+                >
+                  <SlidersHorizontal className="size-3.5" />
+                  Filters
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[320px] overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                  <SheetDescription>
+                    Refine your search results
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="px-4 pb-4">
+                  <SearchFilters
+                    layout="vertical"
+                    onApply={() => setFiltersOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <SearchFilters layout="horizontal" />
+          )}
         </div>
 
-        {/* Results */}
+        <div className="flex items-center gap-3 shrink-0">
+          {!isLoading && totalCount > 0 && (
+            <span className="text-xs text-white/30 hidden sm:block font-heading">
+              {totalCount} {totalCount === 1 ? "result" : "results"}
+            </span>
+          )}
+
+          <SearchSortControls />
+          <ViewToggle />
+        </div>
+      </motion.div>
+
+      {/* ── Results ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
         {showResults && viewMode === "grid" && (
           <SearchResultsGrid games={displayGames} isLoading={false} />
         )}
@@ -152,7 +177,6 @@ export function SearchPageClient() {
           <SearchResultsList games={displayGames} isLoading={false} />
         )}
 
-        {/* Loading skeletons */}
         {isLoading && viewMode === "grid" && (
           <SearchResultsGrid games={[]} isLoading />
         )}
@@ -161,17 +185,15 @@ export function SearchPageClient() {
           <SearchResultsList games={[]} isLoading />
         )}
 
-        {/* Loading more indicator */}
+        {/* Loading more */}
         {isFetching && !isLoading && (
-          <div className="flex justify-center py-4">
+          <div className="flex justify-center py-8">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-gaming-orange border-t-transparent" />
           </div>
         )}
 
-        {/* Infinite scroll trigger */}
         {hasMore && <div ref={infiniteScrollRef} className="h-1" />}
 
-        {/* Empty state */}
         {showEmpty && (
           <EmptyState
             icon={<Search />}

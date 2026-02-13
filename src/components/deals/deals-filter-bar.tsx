@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GamingButton } from "@/components/gaming";
 import type { Platform, DealTag } from "@/lib/types";
 
 const platforms: { value: Platform | "all"; label: string; icon: React.ElementType }[] = [
@@ -56,22 +55,28 @@ function DealsFilterBar({
   onReset,
 }: DealsFilterBarProps) {
   return (
-    <div className="flex items-center gap-3 flex-wrap">
-      {/* Platform toggles */}
-      <div className="flex items-center rounded-lg border border-border overflow-hidden">
+    <div
+      className={cn(
+        "flex items-center gap-3 flex-wrap",
+        "p-3 rounded-xl",
+        "bg-white/[0.02] border border-white/[0.05]"
+      )}
+    >
+      {/* Platform pill toggles */}
+      <div className="inline-flex items-center rounded-full bg-white/[0.03] border border-white/[0.04] p-1 gap-0.5">
         {platforms.map(({ value, label, icon: Icon }) => (
           <button
             key={value}
             type="button"
             onClick={() => onPlatformChange(value)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 text-xs font-heading font-medium transition-colors",
+              "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-heading font-semibold transition-all duration-200",
               platform === value
-                ? "bg-gaming-orange text-white"
-                : "text-muted-foreground hover:text-foreground hover:bg-gaming-surface-elevated"
+                ? "bg-white/[0.08] text-white shadow-sm"
+                : "text-white/35 hover:text-white/60"
             )}
           >
-            <Icon size={14} />
+            <Icon size={13} />
             <span className="hidden sm:inline">{label}</span>
           </button>
         ))}
@@ -79,7 +84,10 @@ function DealsFilterBar({
 
       {/* Min deal score */}
       <Select value={minScore} onValueChange={onMinScoreChange}>
-        <SelectTrigger size="sm" className="w-[120px]">
+        <SelectTrigger
+          size="sm"
+          className="w-[120px] rounded-full bg-white/[0.03] border-white/[0.04] text-white/50 text-xs font-heading"
+        >
           <SelectValue placeholder="Min Score" />
         </SelectTrigger>
         <SelectContent>
@@ -96,7 +104,7 @@ function DealsFilterBar({
         placeholder="Max price"
         value={maxPrice}
         onChange={(e) => onMaxPriceChange(e.target.value)}
-        className="w-[110px] h-8 text-sm"
+        className="w-[110px] h-8 text-xs font-heading rounded-full bg-white/[0.03] border-white/[0.04] text-white/70 placeholder:text-white/25"
         min={0}
         step={0.01}
       />
@@ -106,7 +114,10 @@ function DealsFilterBar({
         value={selectedTag}
         onValueChange={(value) => onSelectedTagChange(value as DealTag | "all")}
       >
-        <SelectTrigger size="sm" className="w-[150px]">
+        <SelectTrigger
+          size="sm"
+          className="w-[150px] rounded-full bg-white/[0.03] border-white/[0.04] text-white/50 text-xs font-heading"
+        >
           <SelectValue placeholder="All Tags" />
         </SelectTrigger>
         <SelectContent>
@@ -119,10 +130,14 @@ function DealsFilterBar({
       </Select>
 
       {/* Reset */}
-      <GamingButton variant="ghost" size="sm" onClick={onReset}>
-        <RotateCcw size={14} />
+      <button
+        type="button"
+        onClick={onReset}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-medium text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-all duration-200 ml-auto"
+      >
+        <RotateCcw size={12} />
         Reset
-      </GamingButton>
+      </button>
     </div>
   );
 }
