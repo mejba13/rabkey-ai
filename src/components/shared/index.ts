@@ -15,3 +15,4 @@ export {
   AnimatedCounter,
   type AnimatedCounterProps,
 } from "./animated-counter";
+export { YouTubeBackground } from "./youtube-background";

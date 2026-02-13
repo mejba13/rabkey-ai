@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Sparkles, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/layout/page-container";
-import { GradientText, AnimatedCounter } from "@/components/shared";
+import { GradientText, AnimatedCounter, YouTubeBackground } from "@/components/shared";
 import { GamingButton } from "@/components/gaming";
 import { Input } from "@/components/ui/input";
 
@@ -44,59 +45,6 @@ const platforms = [
 ] as const;
 
 /* ═══════════════════════════════════════════════
-   Background Video
-   ═══════════════════════════════════════════════ */
-
-function HeroVideo() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    function onCanPlay() {
-      setIsLoaded(true);
-    }
-
-    video.addEventListener("canplaythrough", onCanPlay);
-    return () => video.removeEventListener("canplaythrough", onCanPlay);
-  }, []);
-
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className={cn(
-          "absolute inset-0 w-full h-full object-cover",
-          "transition-opacity duration-1000",
-          isLoaded ? "opacity-30" : "opacity-0"
-        )}
-        aria-hidden="true"
-      >
-        <source src="/videos/hero-bg.webm" type="video/webm" />
-        <source src="/videos/hero-bg.mp4" type="video/mp4" />
-      </video>
-
-      {/* Color grade overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, oklch(0.159 0 0 / 40%) 0%, oklch(0.159 0 0 / 70%) 100%)",
-          mixBlendMode: "multiply",
-        }}
-      />
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════
    Hero Section
    ═══════════════════════════════════════════════ */
 
@@ -122,7 +70,7 @@ export function HeroSection() {
   return (
     <section className="relative min-h-[100dvh] flex items-center overflow-hidden">
       {/* ── Background Video ── */}
-      <HeroVideo />
+      <YouTubeBackground videoId="tzKi5pxDxgw" overlayOpacity={0.5} />
 
       {/* ── Gradient overlays ── */}
       <div
